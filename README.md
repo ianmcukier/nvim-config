@@ -1,0 +1,1 @@
+This configuration started as a mixture of the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) project together with Josean Martinez [video tutorial](https://www.youtube.com/watch?v=6pAG3BHurdM)
