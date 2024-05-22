@@ -9,6 +9,12 @@ return {
         vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
       end
 
+      require('which-key').register({
+        ["<leader>h"] = {
+          name = "Gitsigns"
+        }
+      })
+
       -- Navigation
       map("n", "]h", gs.next_hunk, "Next Hunk")
       map("n", "[h", gs.prev_hunk, "Prev Hunk")

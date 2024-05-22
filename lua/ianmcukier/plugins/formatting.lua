@@ -1,13 +1,21 @@
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
+
 	config = function()
 		local conform = require("conform")
 
 		conform.setup({
+			formatters = {
+				sql_formatter = {
+					args = { "-l", "postgresql" },
+				},
+			},
 			formatters_by_ft = {
-				-- markdown = { "prettier" },
+				markdown = { "prettier" },
 				lua = { "stylua" },
+				go = { "goimports", "gofumpt" },
+				sql = { "sql_formatter" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

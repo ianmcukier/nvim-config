@@ -14,7 +14,7 @@ opt.shiftwidth = 2
 opt.expandtab = true
 opt.autoindent = true
 
-opt.wrap = false
+opt.wrap = true
 
 -- search settings
 opt.ignorecase = true
@@ -27,7 +27,7 @@ opt.splitbelow = true
 -- misc
 opt.signcolumn = "yes"
 opt.backspace = "indent,eol,start"
-opt.guifont = "JetBrainsMono NFM:h10"
+opt.guifont = "JetBrainsMono NFM:h8"
 
 -- Preview substitutions live, as you type!
 opt.inccommand = "split"
@@ -42,9 +42,9 @@ vim.opt.undofile = true
 --  Try it with `yap` in normal mode
 --  Skkee `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank()
-	end,
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
 })

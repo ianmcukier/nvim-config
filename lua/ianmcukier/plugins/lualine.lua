@@ -4,7 +4,7 @@ return {
   config = function()
     local lualine = require("lualine")
     local lazy_status = require("lazy.status") -- to configure lazy pending updates count
-
+    vim.opt.showmode = false
     -- stylua: ignore
     local colors = {
       blue   = '#80a0ff',
@@ -37,38 +37,48 @@ return {
     -- configure lualine with modified theme
     lualine.setup({
       options = {
-				theme = bubbles_theme,
-				component_separators = "",
-				section_separators = { left = "", right = "" },
-			},
-			sections = {
-				lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
-				lualine_b = { "filename", "branch" },
-				lualine_c = {
-					"%=", --[[ add your center compoentnts here in place of this comment ]]
-				},
-				lualine_x = {      
+        theme = bubbles_theme,
+        component_separators = "",
+        section_separators = { left = "", right = "" },
+        ignore_focus = {
+          "dapui_watches", "dapui_breakpoints",
+          "dapui_scopes", "dapui_console",
+          "dapui_stacks", "dap-repl"
+        },
+      },
+      sections = {
+        lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
+        lualine_b = { "filename", "branch" },
+        lualine_c = {
+
+        },
+        lualine_x = {
+          {
+            require("noice").api.statusline.mode.get,
+            cond = require("noice").api.statusline.mode.has,
+            color = { fg = "#ff9e64" },
+          },
           {
             lazy_status.updates,
             cond = lazy_status.has_updates,
             color = { fg = "#ff9e64" },
-          }
+          },
         },
-				lualine_y = { "filetype", "progress" },
-				lualine_z = {
-					{ "location", separator = { right = "" }, left_padding = 2 },
-				},
-			},
-			inactive_sections = {
-				lualine_a = { "filename" },
-				lualine_b = {},
-				lualine_c = {},
-				lualine_x = {},
-				lualine_y = {},
-				lualine_z = { "location" },
-			},
-			tabline = {},
-			extensions = {},
+        lualine_y = { "filetype", "progress" },
+        lualine_z = {
+          { "location", separator = { right = "" }, left_padding = 2 },
+        },
+      },
+      inactive_sections = {
+        lualine_a = { "filename" },
+        lualine_b = {},
+        lualine_c = {},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {},
+      extensions = {},
 
     })
   end,

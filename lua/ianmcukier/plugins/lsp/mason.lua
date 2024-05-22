@@ -27,12 +27,19 @@ return {
 			-- list of servers for mason to install
 			ensure_installed = {
 				"lua_ls",
+				"gopls",
+				"sqlls",
 			},
 		})
 
 		mason_tool_installer.setup({
 			ensure_installed = {
-				-- "prettier", -- prettier formatter
+				"gofumpt",
+				"dart-debug-adapter",
+				"sql-formatter",
+				"goimports",
+				"prettier", -- prettier formatter
+				"stylua",
 			},
 		})
 	end,
