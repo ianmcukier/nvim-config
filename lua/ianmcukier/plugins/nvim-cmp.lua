@@ -10,6 +10,7 @@ return {
 		"hrsh7th/cmp-cmdline",
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
+		"hrsh7th/cmp-nvim-lsp-signature-help",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -21,9 +22,50 @@ return {
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
 
+		lspkind.init({
+			mode = "symbol_text",
+			symbol_map = {
+				Copilot = "",
+				Text = "󰉿",
+				Method = "󰆧",
+				Function = "󰊕",
+				Constructor = "",
+				Field = "󰜢",
+				Variable = "󰀫",
+				Class = "󰠱",
+				Interface = "",
+				Module = "",
+				Property = "󰜢",
+				Unit = "󰑭",
+				Value = "󰎠",
+				Enum = "",
+				Keyword = "󰌋",
+				Snippet = "",
+				Color = "󰏘",
+				File = "󰈙",
+				Reference = "󰈇",
+				Folder = "󰉋",
+				EnumMember = "",
+				Constant = "󰏿",
+				Struct = "󰙅",
+				Event = "",
+				Operator = "󰆕",
+				TypeParameter = "",
+			},
+		})
 		cmp.setup({
 			completion = {
 				completeopt = "menu,menuone,preview,noselect",
+			},
+			window = {
+				completion = cmp.config.window.bordered({
+					border = "rounded",
+					-- max_width = 80,
+					winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+				}),
+				documentation = cmp.config.window.bordered({
+					border = "rounded",
+				}),
 			},
 			snippet = { -- configure how nvim-cmp interacts with snippet engine
 				expand = function(args)
@@ -33,35 +75,47 @@ return {
 			mapping = cmp.mapping.preset.insert({
 				["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
 				["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
-				["<C-b>"] = cmp.mapping.scroll_docs(-4),
-				["<C-f>"] = cmp.mapping.scroll_docs(4),
+				-- ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+				-- ["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
 				["<C-e>"] = cmp.mapping.abort(), -- close completion window
 				["<CR>"] = cmp.mapping.confirm({ select = false }),
 			}),
 			-- sources for autocompletion
 			sources = cmp.config.sources({
-				{ { name = "nvim_lsp" } },
-				{ { name = "luasnip" } }, -- snippets
-				{ { name = "buffer" } }, -- text within current buffer
-				{ { name = "path" } }, -- file system paths
+				{ name = "nvim_lsp" },
+				{ name = "luasnip" }, -- snippets
+				{ name = "buffer" }, -- text within current buffer
+				{ name = "path" }, -- file system paths
+				{ name = "nvim_lsp_signature_help" },
 			}),
 			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
-				format = lspkind.cmp_format({
-					maxwidth = 50,
-					ellipsis_char = "...",
-				}),
+				expandable_indicator = true,
+				fields = { "kind", "abbr", "menu" },
+				format = function(entry, vim_item)
+					local kind = lspkind.cmp_format({
+						ellipsis_char = "…",
+						maxwidth = 50,
+						mode = "symbol_text",
+						with_text = true,
+					})(entry, vim_item)
+					local strings = vim.split(kind.kind, "%s", { trimempty = true })
+					kind.kind = " " .. (strings[1] or "") .. " "
+					kind.menu = "    (" .. (strings[2] or "") .. ")"
+
+					return kind
+				end,
 			},
-			sorting = {
-				comparators = {
-					cmp.config.compare.offset,
-					cmp.config.compare.exact,
-					cmp.config.compare.score,
-					cmp.config.compare.recently_used,
-					cmp.config.compare.kind,
-				},
-			},
+			-- sorting = {
+			-- 	comparators = {
+			-- 		cmp.config.compare.offset,
+			-- 		cmp.config.compare.exact,
+			-- 		cmp.config.compare.score,
+			-- 		cmp.config.compare.recently_used,
+			-- 		cmp.config.compare.kind,
+			-- 	},
+			-- },
 		})
 		-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
 		cmp.setup.cmdline({ "/", "?" }, {

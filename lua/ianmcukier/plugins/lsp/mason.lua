@@ -29,17 +29,19 @@ return {
 				"lua_ls",
 				"gopls",
 				"sqlls",
+				"pyright",
+				"terraformls",
 			},
 		})
 
 		mason_tool_installer.setup({
 			ensure_installed = {
 				"gofumpt",
-				"dart-debug-adapter",
 				"sql-formatter",
 				"goimports",
 				"prettier", -- prettier formatter
 				"stylua",
+				"dart-debug-adapter",
 			},
 		})
 	end,

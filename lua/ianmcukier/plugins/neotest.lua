@@ -24,23 +24,28 @@ return {
 		local neotest = require("neotest")
 
 		neotest.setup({
-			diagnostic = {
-				enabled = true,
-			},
 			status = {
 				virtual_text = true,
 				signs = true,
 			},
+			output = {
+				open_on_run = false,
+			},
+			discovery = {
+				enabled = false,
+			},
 			adapters = {
 				require("neotest-go"),
-				require("neotest-dart"),
+				require("neotest-dart")({
+					command = "flutter",
+					use_lsp = true,
+					custom_test_method_names = { "blocTest", "testWidgets" },
+				}),
 			},
 		})
 
-		require("which-key").register({
-			["<leader>t"] = {
-				name = "Tests",
-			},
+		require("which-key").add({
+			{ "<leader>t", group = "Tests" },
 		})
 	end,
 	keys = {
@@ -57,6 +62,13 @@ return {
 				require("neotest").run.run(vim.fn.expand("%"))
 			end,
 			desc = "Run all tests in file",
+		},
+		{
+			"<leader>to",
+			function()
+				require("neotest").output_panel.toggle()
+			end,
+			desc = "Toggle output panel",
 		},
 		-- { "<leader>tR", "<cmd>Neotest run <CR>", desc = "Run nearest test" },
 	},

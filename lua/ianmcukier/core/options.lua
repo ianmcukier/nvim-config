@@ -1,5 +1,7 @@
 vim.cmd("let g:netrw_liststyle = 3")
 vim.cmd("language en_US")
+vim.cmd("let g:tmux_navigator_disable_when_zoomed = 1")
+
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
@@ -42,9 +44,41 @@ vim.opt.undofile = true
 --  Try it with `yap` in normal mode
 --  Skkee `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Highlight when yanking (copying) text",
-  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
 })
+
+local signs = {
+	ERROR = "",
+	WARN = "",
+	HINT = "",
+	INFO = "󰠠",
+}
+vim.diagnostic.config({
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = signs["ERROR"],
+			[vim.diagnostic.severity.WARN] = signs["WARN"],
+			[vim.diagnostic.severity.INFO] = signs["HINT"],
+			[vim.diagnostic.severity.HINT] = signs["INFO"],
+		},
+	},
+	virtual_text = {
+		prefix = "",
+	},
+	-- float = {
+	-- 	border = "rounded",
+	-- 	format = function(d)
+	-- 		return ("%s (%s) [%s]"):format(d.message, d.source, d.code or d.user_data.lsp.code)
+	-- 	end,
+	-- },
+	-- underline = true,
+	-- jump = {
+	-- 	float = true,
+	-- },
+})
+
+opt.termguicolors = true
