@@ -16,6 +16,7 @@ return {
 				lua = { "stylua" },
 				go = { "goimports", "gofumpt" },
 				sql = { "sql_formatter" },
+				swift = { "swift_format" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

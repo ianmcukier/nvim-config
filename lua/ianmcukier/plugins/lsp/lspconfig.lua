@@ -107,6 +107,21 @@ return {
 		-- 	},
 		-- })
 
+		-- Non-mason LSP configuraions
+		lspconfig.clangd.setup({})
+		lspconfig.rust_analyzer.setup({})
+		lspconfig.sourcekit.setup({
+			-- filetypes = { "swift" },
+			capabilities = capabilities,
+			-- cmd = { "sourcekit-lsp" },
+			-- root_dir = function(filename, _)
+			-- 	local util = require("lspconfig.util")
+			-- return util.root_pattern("*xcodeproj", ".xcworkspace")(filename)
+			-- 		or util.find_git_ancestor(filename)
+			-- 		or util.root_pattern("Package.swift")(filename)
+			-- end,
+			-- root_dir = "~/Develop/inda_audio/example/ios/",
+		})
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
 			function(server_name)
@@ -176,6 +191,7 @@ return {
 		vim.filetype.add({
 			extension = {
 				arb = "json",
+				["swift-format"] = "json",
 			},
 		})
 	end,

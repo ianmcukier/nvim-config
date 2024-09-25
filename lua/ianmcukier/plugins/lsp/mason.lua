@@ -42,6 +42,7 @@ return {
 				"prettier", -- prettier formatter
 				"stylua",
 				"dart-debug-adapter",
+				"swiftlint",
 			},
 		})
 	end,

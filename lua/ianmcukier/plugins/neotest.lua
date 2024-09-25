@@ -1,6 +1,7 @@
 ---@diagnostic disable: missing-fields
 return {
 	"nvim-neotest/neotest",
+	ft = { "dart", "go" },
 	dependencies = {
 		"nvim-neotest/nvim-nio",
 		"nvim-lua/plenary.nvim",
@@ -47,29 +48,10 @@ return {
 		require("which-key").add({
 			{ "<leader>t", group = "Tests" },
 		})
+		vim.keymap.set("n", "<leader>tr", neotest.run.run, { desc = "Run nearest test" })
+		vim.keymap.set("n", "<leader>tr", neotest.run.run, { desc = "Run all tests in file" })
+		vim.keymap.set("n", "<leader>tr", function()
+			neotest.run.run(vim.fn.expand("%"))
+		end, { desc = "Toggle output panel" })
 	end,
-	keys = {
-		{
-			"<leader>tr",
-			function()
-				require("neotest").run.run()
-			end,
-			desc = "Run nearest test",
-		},
-		{
-			"<leader>tR",
-			function()
-				require("neotest").run.run(vim.fn.expand("%"))
-			end,
-			desc = "Run all tests in file",
-		},
-		{
-			"<leader>to",
-			function()
-				require("neotest").output_panel.toggle()
-			end,
-			desc = "Toggle output panel",
-		},
-		-- { "<leader>tR", "<cmd>Neotest run <CR>", desc = "Run nearest test" },
-	},
 }

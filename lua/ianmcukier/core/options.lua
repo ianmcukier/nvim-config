@@ -1,14 +1,16 @@
 vim.cmd("let g:netrw_liststyle = 3")
 vim.cmd("language en_US")
 vim.cmd("let g:tmux_navigator_disable_when_zoomed = 1")
+-- vim.cmd("let g:pumheight = 10")
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = true
+vim.g.have_nerd_font = false
 
 local opt = vim.opt
 
 opt.relativenumber = true
 opt.number = true
+opt.pumheight = 10
 
 -- tabs & identation
 opt.tabstop = 2
@@ -29,7 +31,7 @@ opt.splitbelow = true
 -- misc
 opt.signcolumn = "yes"
 opt.backspace = "indent,eol,start"
-opt.guifont = "JetBrainsMono NFM:h8"
+opt.guifont = "JetBrainsMono NFM:h6"
 
 -- Preview substitutions live, as you type!
 opt.inccommand = "split"

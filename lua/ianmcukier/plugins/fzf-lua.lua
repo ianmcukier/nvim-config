@@ -13,9 +13,11 @@ return {
 			"telescope",
 			files = {
 				cwd_prompt = false,
-				formatter = "path.filename_first", -- places file name first
+				-- path_shorten = true, -- 'true' or number, shorten path?
+				formatter = { "path.filename_first", 2 }, -- places file name first
 				-- cwd = vim.loop.cwd(),
 			},
+
 			-- grep = {
 			-- 	rg_opts = [[--glob "!test" --glob "!.git" --hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e]],
 			-- },
@@ -27,7 +29,23 @@ return {
 			{ "<leader>sr", group = "Search Resume" },
 		})
 
-		vim.keymap.set("n", "<leader>sf", fzf.files, { desc = "Search Files" })
+		vim.keymap.set("n", "<leader>sf", function()
+			fzf.files({
+				fzf_opts = {
+					-- ["-e"] = true,
+					["--query"] = "!test ",
+				},
+			})
+		end, { desc = "Search Files" })
+		vim.keymap.set("n", "<leader>stf", function()
+			fzf.files({
+				fzf_opts = {
+					-- ["-e"] = true,
+					["--query"] = "'test ",
+				},
+			})
+		end, { desc = "Search Test Files" })
+
 		vim.keymap.set("n", "<leader>sg", function()
 			fzf.live_grep_glob({
 				rg_opts = [[ --sort=path --hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --with-filename --glob "!*_test.*" -g "!.git" --glob !build --glob !spell --glob !lockfiles --glob !LICENSE]],
@@ -38,6 +56,7 @@ return {
 				rg_opts = [[ --sort=path --hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --with-filename --glob "*_test.*" -g "!.git" --glob !build --glob !spell --glob !lockfiles --glob !LICENSE]],
 			})
 		end, { desc = "Search Tests Grep" })
+
 		vim.keymap.set("n", "<leader>sw", fzf.grep_cword, { desc = "Search Word" })
 		vim.keymap.set("n", "<leader><leader>", fzf.buffers, { desc = "Search open buffers" })
 		vim.keymap.set("n", "<leader>s.", fzf.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
@@ -51,14 +70,14 @@ return {
 		opts.desc = "Show LSP references"
 		vim.keymap.set("n", "gr", function()
 			fzf.lsp_references({
-				file_ignore_patterns = { ".*_test.*" },
+				fzf_opts = { ["--query"] = "!test " },
 			})
 		end, opts)
 
 		--TODO: how to show only test references?
 		vim.keymap.set("n", "gtr", function()
 			fzf.lsp_references({
-				-- fzf_opts = { ["--query"] = "test" },
+				fzf_opts = { ["--query"] = "'test " },
 			})
 		end, opts)
 		-- Shortcut for searching your Neovim configuration files

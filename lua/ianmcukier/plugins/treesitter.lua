@@ -50,6 +50,7 @@ return {
 				"sql",
 				"python",
 				"terraform",
+				"swift",
 				-- "dart",
 			},
 			incremental_selection = {

@@ -1,7 +1,7 @@
 ---@diagnostic disable: missing-fields
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	-- event = "InsertEnter",
 	dependencies = {
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system paths
@@ -137,9 +137,9 @@ return {
 					end,
 				}), -- next suggestion
 			}),
-			sources = {
+			sources = cmp.config.sources({
 				{ name = "buffer" },
-			},
+			}),
 		})
 
 		-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
@@ -164,9 +164,9 @@ return {
 			}),
 			sources = cmp.config.sources({
 				{ name = "path" },
-			}, {
 				{
 					name = "cmdline",
+					max_height = 3,
 					option = {
 						ignore_cmds = { "Man", "!" },
 					},
@@ -177,6 +177,7 @@ return {
 				format = lspkind.cmp_format({
 					mode = "symbol_text", -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
 					maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+					maxheight = 3,
 					before = function(_, vim_item)
 						if vim_item.kind == "Variable" then
 							vim_item.kind = ""
