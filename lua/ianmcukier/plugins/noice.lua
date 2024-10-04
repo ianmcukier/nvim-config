@@ -1,4 +1,3 @@
--- lazy.nvim
 return {
 	"folke/noice.nvim",
 	event = "VeryLazy",
@@ -13,6 +12,7 @@ return {
 			opts = {
 				top_down = true,
 				stages = "static",
+				render = "minimal",
 				max_height = 4,
 				max_width = 50,
 			},
@@ -20,6 +20,14 @@ return {
 	},
 	config = function()
 		require("noice").setup({
+			messages = {
+				enabled = true,
+				view = "mini",
+				view_error = "notify",
+				view_warn = "notify",
+				view_history = "messages",
+				view_search = "virtualtext",
+			},
 			cmdline = {
 				view = "cmdline",
 				format = {
@@ -48,5 +56,16 @@ return {
 				lsp_doc_border = true, -- add a border to hover docs and signature help
 			},
 		})
+		vim.keymap.set({ "n", "i", "s" }, "<c-f>", function()
+			if not require("noice.lsp").scroll(4) then
+				return "<c-f>"
+			end
+		end, { silent = true, expr = true })
+
+		vim.keymap.set({ "n", "i", "s" }, "<c-b>", function()
+			if not require("noice.lsp").scroll(-4) then
+				return "<c-b>"
+			end
+		end, { silent = true, expr = true })
 	end,
 }

@@ -64,11 +64,11 @@ return {
 		dashboard.section.footer.val = footer()
 		dashboard.section.footer.opts.hl = "Constant"
 		dashboard.opts.layout = {
-			{ type = "padding", val = 6 },
+			{ type = "padding", val = 4 },
 			dashboard.section.header,
 			{ type = "padding", val = 3 },
 			dashboard.section.buttons,
-			{ type = "padding", val = 8 },
+			{ type = "padding", val = 10 },
 			dashboard.section.footer,
 		}
 		-- Send config to alpha

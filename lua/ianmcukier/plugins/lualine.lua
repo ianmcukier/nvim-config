@@ -17,7 +17,8 @@ return {
       white  = '#c6c6c6',
       red    = '#ff5189',
       violet = '#d183e8',
-      grey   = '#303030',
+      grey   = '#313244',
+      inactive = "#282828"
     }
 
 		local bubbles_theme = {
@@ -32,9 +33,9 @@ return {
 			replace = { a = { fg = colors.black, bg = colors.red } },
 
 			inactive = {
-				a = { fg = colors.white, bg = colors.grey },
-				b = { fg = colors.white, bg = colors.grey },
-				c = { fg = colors.white, bg = colors.grey },
+				a = { fg = colors.white, bg = colors.inactive },
+				b = { fg = colors.white, bg = colors.inactive },
+				c = { fg = colors.white, bg = colors.inactive },
 			},
 		}
 
@@ -51,6 +52,16 @@ return {
 					"dapui_console",
 					"dapui_stacks",
 					"dap-repl",
+				},
+				disabled_filetypes = {
+					statusline = {
+						"NvimTree",
+						"alpha",
+					},
+					winbar = {
+						"NvimTree",
+						"alpha",
+					},
 				},
 			},
 			sections = {

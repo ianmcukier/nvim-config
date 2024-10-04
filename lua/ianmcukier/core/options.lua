@@ -1,5 +1,5 @@
 vim.cmd("let g:netrw_liststyle = 3")
-vim.cmd("language en_US")
+-- vim.cmd("language en_US")
 vim.cmd("let g:tmux_navigator_disable_when_zoomed = 1")
 -- vim.cmd("let g:pumheight = 10")
 
@@ -8,6 +8,7 @@ vim.g.have_nerd_font = false
 
 local opt = vim.opt
 
+opt.encoding = "utf-8"
 opt.relativenumber = true
 opt.number = true
 opt.pumheight = 10

@@ -60,7 +60,22 @@ return {
 				keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
 
 				opts.desc = "Show documentation for what is under cursor"
-				keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
+				opts.remap = false
+				-- keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
+				keymap.set("n", "K", function()
+					local base_win_id = vim.api.nvim_get_current_win()
+					local windows = vim.api.nvim_tabpage_list_wins(0)
+					for _, win_id in ipairs(windows) do
+						if win_id ~= base_win_id then
+							local win_cfg = vim.api.nvim_win_get_config(win_id)
+							if win_cfg.relative == "win" and win_cfg.win == base_win_id then
+								require("noice.lsp.docs").hide(require("noice.lsp.docs").get("hover"))
+								return
+							end
+						end
+					end
+					require("noice.lsp").hover()
+				end, opts)
 
 				opts.desc = "Restart LSP"
 				keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
@@ -109,10 +124,18 @@ return {
 
 		-- Non-mason LSP configuraions
 		lspconfig.clangd.setup({})
-		lspconfig.rust_analyzer.setup({})
+
+		local sourkitCapabilities = cmp_nvim_lsp.default_capabilities({
+			workspace = {
+				didChangeWatchedFiles = {
+					dynamicRegistration = true,
+				},
+			},
+		})
+		-- sourkitCapabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
 		lspconfig.sourcekit.setup({
 			-- filetypes = { "swift" },
-			capabilities = capabilities,
+			capabilities = sourkitCapabilities,
 			-- cmd = { "sourcekit-lsp" },
 			-- root_dir = function(filename, _)
 			-- 	local util = require("lspconfig.util")
