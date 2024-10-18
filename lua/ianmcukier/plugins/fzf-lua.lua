@@ -51,7 +51,7 @@ return {
 				rg_opts = [[ --sort=path --hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --with-filename --glob "!*_test.*" -g "!.git" --glob !build --glob !spell --glob !lockfiles --glob !LICENSE]],
 			})
 		end, { desc = "Search Grep" })
-		vim.keymap.set("n", "<leader>sG", function()
+		vim.keymap.set("n", "<leader>stg", function()
 			fzf.live_grep_glob({
 				rg_opts = [[ --sort=path --hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --with-filename --glob "*_test.*" -g "!.git" --glob !build --glob !spell --glob !lockfiles --glob !LICENSE]],
 			})

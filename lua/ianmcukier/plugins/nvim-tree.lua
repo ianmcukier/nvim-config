@@ -7,6 +7,8 @@ return {
 		-- recommended settings
 		vim.g.loaded_netrw = 1
 		vim.g.loaded_netrwPlugin = 1
+
+		vim.opt.termguicolors = true
 		nvimtree.setup({
 			sync_root_with_cwd = true,
 			respect_buf_cwd = true,

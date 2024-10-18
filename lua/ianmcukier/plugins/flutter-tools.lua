@@ -9,7 +9,7 @@ return {
 	config = function()
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 		require("flutter-tools").setup({
-			flutter_path = "/Users/ianmcukier/Develop/flutter/bin/flutter",
+			flutter_path = vim.fn.expand("$HOME/Develop/flutter/bin/flutter"),
 			fvm = false,
 			widget_guides = { enabled = true },
 			-- closing_tags = {
@@ -36,10 +36,11 @@ return {
 					completefunctioncalls = true,
 					analysisexcludedfolders = {
 						vim.fn.expand("$HOME/.pub-cache"),
+						-- vim.fn.expand("$HOME/Develop/flutter"),
 					},
 					renamefileswithclasses = "prompt",
 					updateimportsonrename = true,
-					enablesnippets = false,
+					enablesnippets = true,
 				},
 			},
 			debugger = {
