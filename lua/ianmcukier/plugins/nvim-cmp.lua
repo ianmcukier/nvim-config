@@ -1,16 +1,19 @@
----@diagnostic disable: missing-fields
 return {
 	"hrsh7th/nvim-cmp",
+	url = "https://github.com/iguanacucumber/magazine.nvim",
+	enabled = true,
+	version = false, -- last release is way too old
+	name = "nvim-cmp",
 	-- event = "InsertEnter",
 	dependencies = {
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system paths
+		"hrsh7th/cmp-nvim-lsp-signature-help",
 		"L3MON4D3/LuaSnip",
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"hrsh7th/cmp-cmdline",
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
-		"hrsh7th/cmp-nvim-lsp-signature-help",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -73,22 +76,23 @@ return {
 				end,
 			},
 			mapping = cmp.mapping.preset.insert({
-				["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
-				["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
+				-- ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
+				-- ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
 				-- ["<C-b>"] = cmp.mapping.scroll_docs(-4),
 				-- ["<C-f>"] = cmp.mapping.scroll_docs(4),
-				["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
-				["<C-e>"] = cmp.mapping.abort(), -- close completion window
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
+				-- ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
+				-- ["<C-e>"] = cmp.mapping.abort(), -- close completion window
+				-- ["<CR>"] = cmp.mapping.confirm({ select = false }),
 			}),
 			-- sources for autocompletion
-			sources = cmp.config.sources({
-				{ name = "nvim_lsp" },
-				{ name = "luasnip" }, -- snippets
-				{ name = "buffer" }, -- text within current buffer
-				{ name = "path" }, -- file system paths
-				{ name = "nvim_lsp_signature_help" },
-			}),
+			-- sources = cmp.config.sources({
+			-- 	{ name = "nvim_lsp" },
+			-- 	{ name = "luasnip" }, -- snippets
+			-- 	{ name = "path" }, -- file system paths
+			-- 	{ name = "nvim_lsp_signature_help" },
+			-- }, {
+			-- 	{ name = "buffer" }, -- text within current buffer
+			-- }),
 			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
 				expandable_indicator = true,

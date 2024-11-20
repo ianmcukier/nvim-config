@@ -8,6 +8,7 @@ vim.g.have_nerd_font = false
 
 local opt = vim.opt
 
+opt.termguicolors = true
 opt.encoding = "utf-8"
 opt.relativenumber = true
 opt.number = true
@@ -37,7 +38,7 @@ opt.guifont = "JetBrainsMono NFM:h6"
 -- Preview substitutions live, as you type!
 opt.inccommand = "split"
 
--- Set highlight on search, but clear on pressing <Esc> in normal mode
+-- Set cighlight on search, but clear on pressing <Esc> in normal mode
 opt.hlsearch = true
 
 -- Save undo history
@@ -53,35 +54,3 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
-
-local signs = {
-	ERROR = "",
-	WARN = "",
-	HINT = "",
-	INFO = "󰠠",
-}
-vim.diagnostic.config({
-	signs = {
-		text = {
-			[vim.diagnostic.severity.ERROR] = signs["ERROR"],
-			[vim.diagnostic.severity.WARN] = signs["WARN"],
-			[vim.diagnostic.severity.INFO] = signs["HINT"],
-			[vim.diagnostic.severity.HINT] = signs["INFO"],
-		},
-	},
-	virtual_text = {
-		prefix = "",
-	},
-	-- float = {
-	-- 	border = "rounded",
-	-- 	format = function(d)
-	-- 		return ("%s (%s) [%s]"):format(d.message, d.source, d.code or d.user_data.lsp.code)
-	-- 	end,
-	-- },
-	-- underline = true,
-	-- jump = {
-	-- 	float = true,
-	-- },
-})
-
-opt.termguicolors = true

@@ -1,4 +1,6 @@
 {
   "language": "postgresql",
-  "keywordCase": "upper"
+  "keywordCase": "upper",
+  "tabWidth": 2,
+  "expressionWidth": 88
 }

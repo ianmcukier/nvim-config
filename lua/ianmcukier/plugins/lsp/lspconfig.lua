@@ -2,7 +2,8 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
-		"hrsh7th/cmp-nvim-lsp",
+		"saghen/blink.cmp",
+		"rcarriga/nvim-notify",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
 	},
@@ -14,13 +15,17 @@ return {
 		local mason_lspconfig = require("mason-lspconfig")
 
 		-- import cmp-nvim-lsp plugin
-		local cmp_nvim_lsp = require("cmp_nvim_lsp")
+		local cmp_nvim_lsp = require("blink.cmp")
 
 		local keymap = vim.keymap -- for conciseness
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
+				local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+				require("notify")("Attached " .. client.name .. "!", "msg", { title = "LSPConfig" })
+
 				-- Buffer local mappings.
 				-- See `:help vim.lsp.*` for documentation on any of the below functions
 				local opts = { buffer = ev.buf, silent = true }
@@ -109,42 +114,9 @@ return {
 		})
 
 		-- used to enable autocompletion (assign to every lsp server config)
-		local capabilities = cmp_nvim_lsp.default_capabilities()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = cmp_nvim_lsp.get_lsp_capabilities(capabilities)
 
-		-- vim.diagnostic.config({
-		-- 	signs = {
-		-- 		text = {
-		-- 			[vim.diagnostic.severity.ERROR] = " "Invalid 'sign_text',
-		-- 			[vim.diagnostic.severity.WARN] = " ",
-		-- 			[vim.diagnostic.severity.INFO] = " ",
-		-- 			[vim.diagnostic.severity.HINT] = "󰠠 ",
-		-- 		},
-		-- 	},
-		-- })
-
-		-- Non-mason LSP configuraions
-		lspconfig.clangd.setup({})
-
-		local sourkitCapabilities = cmp_nvim_lsp.default_capabilities({
-			workspace = {
-				didChangeWatchedFiles = {
-					dynamicRegistration = true,
-				},
-			},
-		})
-		-- sourkitCapabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
-		lspconfig.sourcekit.setup({
-			-- filetypes = { "swift" },
-			capabilities = sourkitCapabilities,
-			-- cmd = { "sourcekit-lsp" },
-			-- root_dir = function(filename, _)
-			-- 	local util = require("lspconfig.util")
-			-- return util.root_pattern("*xcodeproj", ".xcworkspace")(filename)
-			-- 		or util.find_git_ancestor(filename)
-			-- 		or util.root_pattern("Package.swift")(filename)
-			-- end,
-			-- root_dir = "~/Develop/inda_audio/example/ios/",
-		})
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
 			function(server_name)
@@ -190,8 +162,17 @@ return {
 
 			["sqlls"] = function()
 				lspconfig["sqlls"].setup({
+					cmd = {
+						"/Users/ianmcukier/.local/share/nvim/mason/bin/sql-language-server",
+						"up",
+						"--method",
+						"stdio",
+						"-config",
+						"/User/ianmcukier/.config/sql-language-server/.sqllsrc.json",
+					},
 					capabilities = capabilities,
 					filetypes = { "sql" },
+					root_dir = vim.loop.cwd,
 				})
 			end,
 
@@ -208,6 +189,36 @@ return {
 					filetypes = { "terraform" },
 				})
 			end,
+		})
+
+		-- Non-mason LSP configuraions
+		lspconfig.clangd.setup({
+			capabilities = capabilities,
+			-- init_options = {
+			-- 	compilationDatabasePath = "android/build/cmake",
+			-- },
+			cmd = {
+				"clangd",
+				"--header-insertion=iwyu",
+				"--background-index",
+				"--completion-style=detailed",
+				"--cross-file-rename",
+				"--clang-tidy",
+			},
+		})
+
+		capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
+		lspconfig.sourcekit.setup({
+			filetypes = { "swift" },
+			capabilities = capabilities,
+			cmd = { "sourcekit-lsp" },
+			-- root_dir = function(filename, _)
+			-- 	local util = require("lspconfig.util")
+			-- 	return util.root_pattern("*xcodeproj", ".xcworkspace")(filename)
+			-- 		or util.find_git_ancestor(filename)
+			-- 		or util.root_pattern("Package.swift")(filename)
+			-- end,
+			-- root_dir = "~/Develop/inda_audio/example/ios/",
 		})
 
 		-- Set unrecognized filetypes here

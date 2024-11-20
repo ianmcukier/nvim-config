@@ -1,13 +1,16 @@
 return {
 	"akinsho/flutter-tools.nvim",
-	-- lazy = false,
-	event = "VeryLazy",
+	ft = { "dart" },
+	lazy = false,
+	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"stevearc/dressing.nvim",
 	},
 	config = function()
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
+
 		require("flutter-tools").setup({
 			flutter_path = vim.fn.expand("$HOME/Develop/flutter/bin/flutter"),
 			fvm = false,
@@ -33,14 +36,14 @@ return {
 				capabilities = capabilities,
 				settings = {
 					showTodos = false,
-					completefunctioncalls = true,
-					analysisexcludedfolders = {
-						vim.fn.expand("$HOME/.pub-cache"),
-						-- vim.fn.expand("$HOME/Develop/flutter"),
+					completeFunctionCalls = true,
+					analysisExcludedFolders = {
+						vim.fn.expand("$HOME/.pub-cache/"),
+						vim.fn.expand("$HOME/Develop/flutter/"),
 					},
-					renamefileswithclasses = "prompt",
-					updateimportsonrename = true,
-					enablesnippets = true,
+					renameFilesWithClasses = "prompt",
+					updateImportsOnRename = true,
+					enableSnippets = true,
 				},
 			},
 			debugger = {

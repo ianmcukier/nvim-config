@@ -54,13 +54,16 @@ return {
 				-- "dart",
 			},
 			incremental_selection = {
-				enable = true,
+				enable = false,
 				keymaps = {
 					init_selection = "<C-space>",
 					node_incremental = "<C-space>",
 					scope_incremental = false,
 					node_decremental = "<bs>",
 				},
+			},
+			textobjects = {
+				disable = { "dart" },
 			},
 			-- textobjects = {
 			-- 	-- select = {

@@ -15,7 +15,7 @@ return {
 				markdown = { "prettier" },
 				lua = { "stylua" },
 				go = { "goimports", "gofumpt" },
-				sql = { "sql_formatter" },
+				-- sql = { "sql_formatter" },
 				-- swift = { "swift_format" },
 			},
 			format_on_save = {

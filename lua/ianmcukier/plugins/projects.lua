@@ -5,11 +5,10 @@ return {
 			on_project_selected = function(_, opt)
 				require("fzf-lua").files({ cwd = opt.cwd })
 			end,
-			patterns = { ".git", ">Develop" },
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
-			exclude_dirs = { "~/Develop/flutter", "~/.config/nvim" },
+			detection_methods = { "pattern" },
+			patterns = { ">projects" },
+
+			exclude_dirs = { "~/.config/nvim" },
 		})
 	end,
 }

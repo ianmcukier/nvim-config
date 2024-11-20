@@ -5,46 +5,79 @@ return {
 		"linrongbin16/lsp-progress.nvim",
 	},
 	config = function()
-		require("lsp-progress").setup({})
+		require("lsp-progress").setup({
+			spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
+			client_format = function(client_name, spinner, series_messages)
+				if #series_messages > 0 then
+					return spinner .. " " .. client_name
+				else
+					return nil
+				end
+			end,
+			format = function(messages)
+				local clients = vim.lsp.get_clients({
+					bufnr = vim.fn.bufnr(),
+				})
+
+				if #clients <= 0 then
+					return "󰜺 LSP"
+				end
+
+				if #messages > 0 then
+					return table.concat(messages, " ")
+				end
+
+				return " "
+			end,
+		})
+
 		local lualine = require("lualine")
 		local lazy_status = require("lazy.status") -- to configure lazy pending updates count
 		vim.opt.showmode = false
     -- stylua: ignore
     local colors = {
-      blue   = '#80a0ff',
+      blue   = '#679eb9',
       cyan   = '#79dac8',
       black  = '#080808',
       white  = '#c6c6c6',
       red    = '#ff5189',
-      violet = '#d183e8',
+      violet = '#ea9a97',
       grey   = '#313244',
-      inactive = "#282828"
+      inactive = '#313244',
+      iris = '#c4a7e7'
     }
 
 		local bubbles_theme = {
 			normal = {
-				a = { fg = colors.black, bg = colors.violet },
-				b = { fg = colors.white, bg = colors.grey },
-				c = { fg = colors.white, bg = colors.grey },
-			},
-
-			insert = { a = { fg = colors.black, bg = colors.blue } },
-			visual = { a = { fg = colors.black, bg = colors.cyan } },
-			replace = { a = { fg = colors.black, bg = colors.red } },
-
-			inactive = {
-				a = { fg = colors.white, bg = colors.inactive },
+				a = { fg = colors.inactive, bg = colors.iris, gui = "bold" },
 				b = { fg = colors.white, bg = colors.inactive },
 				c = { fg = colors.white, bg = colors.inactive },
 			},
+
+			insert = { a = { fg = colors.black, bg = colors.white } },
+			visual = { a = { fg = colors.black, bg = colors.cyan } },
+			replace = { a = { fg = colors.black, bg = colors.red } },
+			inactive = { a = { fg = colors.white, bg = colors.inactive } },
 		}
+
+		local function diff_source()
+			local gitsigns = vim.b.gitsigns_status_dict
+			if gitsigns then
+				return {
+					added = gitsigns.added,
+					modified = gitsigns.changed,
+					removed = gitsigns.removed,
+				}
+			end
+		end
 
 		-- configure lualine with modified theme
 		lualine.setup({
 			options = {
 				theme = bubbles_theme,
 				component_separators = "",
-				section_separators = { left = "", right = "" },
+				section_separators = { left = "" },
+				always_divide_middle = false,
 				ignore_focus = {
 					"dapui_watches",
 					"dapui_breakpoints",
@@ -55,48 +88,43 @@ return {
 				},
 				disabled_filetypes = {
 					statusline = {
+						-- "alpha",
 						"NvimTree",
-						"alpha",
 					},
 					winbar = {
 						"NvimTree",
-						"alpha",
+						-- "alpha",
 					},
 				},
 			},
 			sections = {
-				lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
-				lualine_b = { "filename", "branch" },
+				lualine_a = { "mode" },
+				lualine_b = {
+					{
+						"filename",
+						fmt = function(name, context)
+							if name == "[No Name] [-]" then
+								return ""
+							end
+							return name
+						end,
+					},
+					"branch",
+					{ "diff", source = diff_source },
+				},
 				lualine_c = {},
 				lualine_x = {
-					function()
-						-- return require("lsp-progress").progress({})
-						return require("lsp-progress").progress({
-							format = function(messages)
-								-- local active_clients = vim.lsp.get_clients()
-								if #messages > 0 then
-									return table.concat(messages, "")
-								end
-								return ""
-								-- if #active_clients <= 0 then
-								-- 	return ""
-								-- else
-								-- 	local client_names = {}
-								-- 	for _, client in ipairs(active_clients) do
-								-- 		if client and client.name ~= "" then
-								-- 			table.insert(client_names, "[" .. client.name .. "]")
-								-- 		end
-								-- 	end
-								-- 	return table.concat(client_names, "")
-								-- end
-							end,
-						})
-					end,
-					-- {
-					-- 	require("noice").api.statusline.mode.get,
-					-- 	cond = require("noice").api.statusline.mode.has,
-					-- 	color = { fg = "#ff9e64" },
-					-- },
+					{
+						function()
+							local msg = require("lsp-progress").progress()
+							if msg == "" then
+								return "󰜺 LSP"
+							else
+								return msg
+							end
+						end,
+						color = { fg = colors.iris },
+					},
 					{
 						lazy_status.updates,
 						cond = lazy_status.has_updates,
@@ -104,14 +132,24 @@ return {
 					},
 				},
 				lualine_y = { { "filetype" } },
-				lualine_z = { { "location", separator = { right = "" }, left_padding = 2 } },
+				lualine_z = {
+					{
+						"location",
+						color = { fg = colors.white, bg = colors.inactive },
+						separator = { left = " " },
+					},
+				},
 			},
 			inactive_sections = {
 				lualine_a = {
 					{
 						"filename",
-						separator = { left = "" },
-						right_padding = 2,
+						fmt = function(name, context)
+							if name == "[No Name] [-]" then
+								return ""
+							end
+							return name
+						end,
 					},
 				},
 				lualine_b = {},
@@ -121,15 +159,12 @@ return {
 				lualine_z = {
 					{
 						"filetype",
-						separator = { right = "" },
-						left_padding = 2,
 						draw_empty = true,
 						icon_only = true,
 					},
 				},
 			},
 			tabline = {},
-			extensions = {},
 		})
 		-- listen lsp-progress event and refresh lualine
 		vim.api.nvim_create_augroup("lualine_augroup", { clear = true })

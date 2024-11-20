@@ -43,6 +43,7 @@ return {
 				"stylua",
 				"dart-debug-adapter",
 				"swiftlint",
+				-- "golangci-lint",
 			},
 		})
 	end,

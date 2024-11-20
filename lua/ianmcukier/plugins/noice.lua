@@ -3,7 +3,7 @@ return {
 	event = "VeryLazy",
 	dependencies = {
 		-- -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-		-- "MunifTanjim/nui.nvim",
+		"MunifTanjim/nui.nvim",
 		-- OPTIONAL:
 		--   `nvim-notify` is only needed, if you want to use the notification view.
 		--   If not available, we use `mini` as the fallback
@@ -12,9 +12,9 @@ return {
 			opts = {
 				top_down = true,
 				stages = "static",
-				render = "minimal",
-				max_height = 4,
-				max_width = 50,
+				render = "compact",
+				max_height = 15,
+				max_width = 70,
 			},
 		},
 	},
@@ -37,6 +37,9 @@ return {
 				},
 			},
 			lsp = {
+				signature = {
+					auto_open = { enabled = false },
+				},
 				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 				override = {
 					["vim.lsp.util.convert_input_to_markdown_lines"] = true,

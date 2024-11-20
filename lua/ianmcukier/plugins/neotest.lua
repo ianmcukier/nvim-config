@@ -1,7 +1,6 @@
 ---@diagnostic disable: missing-fields
 return {
 	"nvim-neotest/neotest",
-	ft = { "dart", "go" },
 	dependencies = {
 		"nvim-neotest/nvim-nio",
 		"nvim-lua/plenary.nvim",
@@ -12,19 +11,17 @@ return {
 	},
 	config = function()
 		-- get neotest namespace (api call creates or returns namespace)
-		local neotest_ns = vim.api.nvim_create_namespace("neotest")
-		vim.diagnostic.config({
-			virtual_text = {
-				format = function(diagnostic)
-					local message = diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
-					return message
-				end,
-			},
-		}, neotest_ns)
+		-- local neotest_ns = vim.api.nvim_create_namespace("neotest")
+		-- vim.diagnostic.config({
+		-- 	virtual_text = {
+		-- 		format = function(diagnostic)
+		-- 			local message = diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
+		-- 			return message
+		-- 		end,
+		-- 	},
+		-- }, neotest_ns)
 
-		local neotest = require("neotest")
-
-		neotest.setup({
+		require("neotest").setup({
 			status = {
 				virtual_text = true,
 				signs = true,
@@ -42,6 +39,9 @@ return {
 					use_lsp = true,
 					custom_test_method_names = { "blocTest", "testWidgets" },
 				}),
+				-- require("neotest-vim-test")({
+				-- 	ignore_file_types = { ".swift" },
+				-- }),
 			},
 		})
 
