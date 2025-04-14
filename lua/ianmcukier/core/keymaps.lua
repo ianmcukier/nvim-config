@@ -30,3 +30,13 @@ keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
 keymap.set("n", "]q", "<cmd>:cnext<CR>")
 keymap.set("n", "[q", "<cmd>:cprevious<CR>")
 keymap.set("n", "<C-w>h", "<cmd>:split<CR>")
+
+keymap.set("n", "co", function()
+	local bufs = vim.api.nvim_list_bufs()
+	local current_buf = vim.api.nvim_get_current_buf()
+	for _, i in ipairs(bufs) do
+		if i ~= current_buf then
+			vim.api.nvim_buf_delete(i, { force = true })
+		end
+	end
+end)

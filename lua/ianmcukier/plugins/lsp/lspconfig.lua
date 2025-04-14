@@ -3,6 +3,7 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
 		"saghen/blink.cmp",
+		-- "hrsh7th/cmp-nvim-lsp",
 		"rcarriga/nvim-notify",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
@@ -31,20 +32,20 @@ return {
 				local opts = { buffer = ev.buf, silent = true }
 
 				-- set keybinds
-				opts.desc = "Show LSP references"
+				-- opts.desc = "Show LSP references"
 				-- keymap.set("n", "gr", "<cmd>FzfLua lsp_references<CR>", opts) -- show definition, references
-
-				opts.desc = "Go to declaration"
-				keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
-
-				opts.desc = "Show LSP definitions"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
-				opts.desc = "Show LSP implementations"
-				keymap.set("n", "gi", "<cmd>FzfLua lsp_implementations<CR>", opts) -- show lsp implementations
-
-				opts.desc = "Show LSP type definitions"
-				keymap.set("n", "gtd", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
+				--
+				-- opts.desc = "Go to declaration"
+				-- keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
+				--
+				-- opts.desc = "Show LSP definitions"
+				-- keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
+				--
+				-- opts.desc = "Show LSP implementations"
+				-- keymap.set("n", "gi", "<cmd>FzfLua lsp_implementations<CR>", opts) -- show lsp implementations
+				--
+				-- opts.desc = "Show LSP type definitions"
+				-- keymap.set("n", "gtd", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
 
 				opts.desc = "See available code actions"
 				keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { buffer = ev.buf, silent = false }) -- see available code actions, in visual mode will apply to selection
@@ -81,6 +82,7 @@ return {
 					end
 					require("noice.lsp").hover()
 				end, opts)
+				-- vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
 
 				opts.desc = "Restart LSP"
 				keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
@@ -116,6 +118,8 @@ return {
 		-- used to enable autocompletion (assign to every lsp server config)
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities = cmp_nvim_lsp.get_lsp_capabilities(capabilities)
+
+		-- local capabilities = cmp_nvim_lsp.default_capabilities()
 
 		mason_lspconfig.setup_handlers({
 			-- default handler for installed servers
@@ -160,21 +164,21 @@ return {
 				})
 			end,
 
-			["sqlls"] = function()
-				lspconfig["sqlls"].setup({
-					cmd = {
-						"/Users/ianmcukier/.local/share/nvim/mason/bin/sql-language-server",
-						"up",
-						"--method",
-						"stdio",
-						"-config",
-						"/User/ianmcukier/.config/sql-language-server/.sqllsrc.json",
-					},
-					capabilities = capabilities,
-					filetypes = { "sql" },
-					root_dir = vim.loop.cwd,
-				})
-			end,
+			-- ["sqlls"] = function()
+			-- 	lspconfig["sqlls"].setup({
+			-- 		cmd = {
+			-- 			"/Users/ianmcukier/.local/share/nvim/mason/bin/sql-language-server",
+			-- 			"up",
+			-- 			"--method",
+			-- 			"stdio",
+			-- 			"-config",
+			-- 			"/User/ianmcukier/.config/sql-language-server/.sqllsrc.json",
+			-- 		},
+			-- 		capabilities = capabilities,
+			-- 		filetypes = { "sql" },
+			-- 		root_dir = vim.loop.cwd,
+			-- 	})
+			-- end,
 
 			["pyright"] = function()
 				lspconfig["pyright"].setup({
@@ -189,6 +193,19 @@ return {
 					filetypes = { "terraform" },
 				})
 			end,
+
+			["jdtls"] = function()
+				lspconfig["jdtls"].setup({
+					capabilities = capabilities,
+					filetypes = { "java" },
+				})
+			end,
+			["buf_ls"] = function()
+				lspconfig["buf_ls"].setup({
+					capabilities = capabilities,
+					filetypes = { "proto" },
+				})
+			end,
 		})
 
 		-- Non-mason LSP configuraions
@@ -197,6 +214,8 @@ return {
 			-- init_options = {
 			-- 	compilationDatabasePath = "android/build/cmake",
 			-- },
+
+			filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "hpp" },
 			cmd = {
 				"clangd",
 				"--header-insertion=iwyu",
@@ -207,10 +226,18 @@ return {
 			},
 		})
 
-		capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
+		-- local sourceKitCapabilities = cmp_nvim_lsp.default_capabilities({
+		-- 	workspace = {
+		-- 		didChangeWatchedFiles = {
+		-- 			dynamicRegistration = true,
+		-- 		},
+		-- 	},
+		-- })
+		local sourceKitCapabilities = capabilities
+		sourceKitCapabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
 		lspconfig.sourcekit.setup({
 			filetypes = { "swift" },
-			capabilities = capabilities,
+			capabilities = sourceKitCapabilities,
 			cmd = { "sourcekit-lsp" },
 			-- root_dir = function(filename, _)
 			-- 	local util = require("lspconfig.util")

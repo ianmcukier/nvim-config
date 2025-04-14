@@ -8,6 +8,7 @@ vim.g.have_nerd_font = false
 
 local opt = vim.opt
 
+opt.cursorline = true
 opt.termguicolors = true
 opt.encoding = "utf-8"
 opt.relativenumber = true
@@ -37,6 +38,7 @@ opt.guifont = "JetBrainsMono NFM:h6"
 
 -- Preview substitutions live, as you type!
 opt.inccommand = "split"
+opt.incsearch = true
 
 -- Set cighlight on search, but clear on pressing <Esc> in normal mode
 opt.hlsearch = true

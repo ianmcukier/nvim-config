@@ -4,21 +4,12 @@ return {
 		"nvim-tree/nvim-web-devicons",
 		"folke/todo-comments.nvim",
 	},
-	opts = {
-		modes = {
-			my_diagnostics = {
-				mode = "diagnostics",
-				filter = {
-					["not"] = { severity = vim.diagnostic.severity.INFO },
-				},
-			},
-		},
-	},
+	opts = {},
 	cmd = "Trouble",
 	keys = {
 		{
 			"<leader>xx",
-			"<cmd>Trouble diagnostics toggle filter.severity={vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR}<cr>",
+			"<cmd>Trouble diagnostics toggle<cr>",
 			desc = "Diagnostics",
 		},
 		{
@@ -58,3 +49,4 @@ return {
 		})
 	end,
 }
+-- filter.severity={vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR}

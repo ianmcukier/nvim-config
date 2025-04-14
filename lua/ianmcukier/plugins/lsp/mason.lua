@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 return {
 	"williamboman/mason.nvim",
 	dependencies = {
@@ -31,6 +32,8 @@ return {
 				"sqlls",
 				"pyright",
 				"terraformls",
+				"jdtls",
+				"buf_ls",
 			},
 		})
 
@@ -43,7 +46,8 @@ return {
 				"stylua",
 				"dart-debug-adapter",
 				"swiftlint",
-				-- "golangci-lint",
+				"golangci-lint",
+				"black",
 			},
 		})
 	end,

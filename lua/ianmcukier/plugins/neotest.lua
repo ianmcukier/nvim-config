@@ -7,6 +7,7 @@ return {
 		"antoinemadec/FixCursorHold.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		"nvim-neotest/neotest-go",
+		"nvim-neotest/neotest-python",
 		"sidlatau/neotest-dart",
 	},
 	config = function()
@@ -39,6 +40,7 @@ return {
 					use_lsp = true,
 					custom_test_method_names = { "blocTest", "testWidgets" },
 				}),
+				require("neotest-python"),
 				-- require("neotest-vim-test")({
 				-- 	ignore_file_types = { ".swift" },
 				-- }),

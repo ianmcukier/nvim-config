@@ -60,8 +60,7 @@ return {
 
 		telescope.load_extension("fzf")
 		telescope.load_extension("ui-select")
-		telescope.load_extension("flutter")
-		telescope.load_extension("projects")
+		-- telescope.load_extension("flutter")
 		telescope.load_extension("luasnip")
 		-- telescope.load_extension("simulators")
 
@@ -75,10 +74,10 @@ return {
 		keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
 		keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "Search Keymaps" })
 		-- keymap.set("n", "<leader>st", builtin.builtin, { desc = "Search Telescope" })
-		keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Search Diagnostics" })
-		keymap.set("n", "<leader>sl", telescope.extensions.flutter.commands, { desc = "Search Flutter commands" })
-		keymap.set("n", "<leader>sp", telescope.extensions.projects.projects, { desc = "Search Projects" })
-		keymap.set("n", "<leader>ss", telescope.extensions.luasnip.luasnip, { desc = "Search Snippets" })
+		-- keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Search Diagnostics" })
+		-- keymap.set("n", "<leader>sl", telescope.extensions.flutter.commands, { desc = "Search Flutter commands" })
+		-- keymap.set("n", "<leader>sp", telescope.extensions.projects.projects, { desc = "Search Projects" })
+		-- keymap.set("n", "<leader>ss", telescope.extensions.luasnip.luasnip, { desc = "Search Snippets" })
 		keymap.set("n", "<leader>sm", "<cmd>Telescope simulators run<CR>", { desc = "Search Simulators" })
 	end,
 }

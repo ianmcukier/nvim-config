@@ -58,6 +58,9 @@ return { -- You can easily change to a different colorscheme.
 		end
 	end,
 	config = function()
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			command = [[highlight CursorLine guibg=#232a2e]],
+		})
 		require("catppuccin").setup({
 			color_overrides = {
 				mocha = {
