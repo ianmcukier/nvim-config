@@ -12,14 +12,6 @@ return {
 					alternate = "{}.go",
 					type = "test",
 				},
-				["lib/*.dart"] = {
-					alternate = "test/{}_test.dart",
-					type = "source",
-				},
-				["test/*_test.dart"] = {
-					alternate = "lib/{}.dart",
-					type = "test",
-				},
 			},
 		}
 

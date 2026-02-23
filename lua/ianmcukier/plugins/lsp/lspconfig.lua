@@ -68,20 +68,7 @@ return {
 				opts.desc = "Show documentation for what is under cursor"
 				opts.remap = false
 				-- keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
-				keymap.set("n", "K", function()
-					local base_win_id = vim.api.nvim_get_current_win()
-					local windows = vim.api.nvim_tabpage_list_wins(0)
-					for _, win_id in ipairs(windows) do
-						if win_id ~= base_win_id then
-							local win_cfg = vim.api.nvim_win_get_config(win_id)
-							if win_cfg.relative == "win" and win_cfg.win == base_win_id then
-								require("noice.lsp.docs").hide(require("noice.lsp.docs").get("hover"))
-								return
-							end
-						end
-					end
-					require("noice.lsp").hover()
-				end, opts)
+				keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				-- vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
 
 				opts.desc = "Restart LSP"
@@ -121,110 +108,136 @@ return {
 
 		-- local capabilities = cmp_nvim_lsp.default_capabilities()
 
-		mason_lspconfig.setup_handlers({
-			-- default handler for installed servers
-			function(server_name)
-				lspconfig[server_name].setup({
-					capabilities = capabilities,
-				})
-			end,
-			["lua_ls"] = function()
-				-- configure lua server (with special settings)
-				lspconfig["lua_ls"].setup({
-					capabilities = capabilities,
-					settings = {
-						Lua = {
-							-- make the language server recognize "vim" global
-							diagnostics = {
-								globals = { "vim", "LazyVim" },
-							},
-							completion = {
-								callSnippet = "Replace",
-							},
-						},
-					},
-				})
-			end,
-
-			["gopls"] = function()
-				lspconfig["gopls"].setup({
-					capabilities = capabilities,
-					cmd = { "gopls" },
-					filetypes = { "go", "gomod", "gowork", "gotmpl" },
-					root_dir = require("lspconfig/util").root_pattern("gowork", "go.mod", ".git"),
-					settings = {
-						gopls = {
-							completeUnimported = true,
-							usePlaceholders = true,
-							analyses = {
-								unusedparams = true,
-							},
-						},
-					},
-				})
-			end,
-
-			-- ["sqlls"] = function()
-			-- 	lspconfig["sqlls"].setup({
-			-- 		cmd = {
-			-- 			"/Users/ianmcukier/.local/share/nvim/mason/bin/sql-language-server",
-			-- 			"up",
-			-- 			"--method",
-			-- 			"stdio",
-			-- 			"-config",
-			-- 			"/User/ianmcukier/.config/sql-language-server/.sqllsrc.json",
-			-- 		},
-			-- 		capabilities = capabilities,
-			-- 		filetypes = { "sql" },
-			-- 		root_dir = vim.loop.cwd,
-			-- 	})
-			-- end,
-
-			["pyright"] = function()
-				lspconfig["pyright"].setup({
-					capabilities = capabilities,
-					filetypes = { "python" },
-				})
-			end,
-
-			["terraformls"] = function()
-				lspconfig["terraformls"].setup({
-					capabilities = capabilities,
-					filetypes = { "terraform" },
-				})
-			end,
-
-			["jdtls"] = function()
-				lspconfig["jdtls"].setup({
-					capabilities = capabilities,
-					filetypes = { "java" },
-				})
-			end,
-			["buf_ls"] = function()
-				lspconfig["buf_ls"].setup({
-					capabilities = capabilities,
-					filetypes = { "proto" },
-				})
-			end,
-		})
+		-- mason_lspconfig.setup_handlers({
+		-- 	-- default handler for installed servers
+		-- 	function(server_name)
+		-- 		lspconfig[server_name].setup({
+		-- 			capabilities = capabilities,
+		-- 		})
+		-- 	end,
+		-- 	["lua_ls"] = function()
+		-- 		-- configure lua server (with special settings)
+		-- 		lspconfig["lua_ls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			settings = {
+		-- 				Lua = {
+		-- 					-- make the language server recognize "vim" global
+		-- 					diagnostics = {
+		-- 						globals = { "vim", "LazyVim" },
+		-- 					},
+		-- 					completion = {
+		-- 						callSnippet = "Replace",
+		-- 					},
+		-- 				},
+		-- 			},
+		-- 		})
+		-- 	end,
+		--
+		-- 	["gopls"] = function()
+		-- 		lspconfig["gopls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			cmd = { "gopls" },
+		-- 			filetypes = { "go", "gomod", "gowork", "gotmpl" },
+		-- 			root_dir = require("lspconfig/util").root_pattern("gowork", "go.mod", ".git"),
+		-- 			settings = {
+		-- 				gopls = {
+		-- 					completeUnimported = true,
+		-- 					usePlaceholders = true,
+		-- 					analyses = {
+		-- 						unusedparams = true,
+		-- 					},
+		-- 				},
+		-- 			},
+		-- 		})
+		-- 	end,
+		--
+		-- 	-- ["sqlls"] = function()
+		-- 	-- 	lspconfig["sqlls"].setup({
+		-- 	-- 		cmd = {
+		-- 	-- 			"/Users/ianmcukier/.local/share/nvim/mason/bin/sql-language-server",
+		-- 	-- 			"up",
+		-- 	-- 			"--method",
+		-- 	-- 			"stdio",
+		-- 	-- 			"-config",
+		-- 	-- 			"/User/ianmcukier/.config/sql-language-server/.sqllsrc.json",
+		-- 	-- 		},
+		-- 	-- 		capabilities = capabilities,
+		-- 	-- 		filetypes = { "sql" },
+		-- 	-- 		root_dir = vim.loop.cwd,
+		-- 	-- 	})
+		-- 	-- end,
+		--
+		-- 	["pyright"] = function()
+		-- 		lspconfig["pyright"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "python" },
+		-- 		})
+		-- 	end,
+		--
+		-- 	["terraformls"] = function()
+		-- 		lspconfig["terraformls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "terraform" },
+		-- 		})
+		-- 	end,
+		--
+		-- 	["jdtls"] = function()
+		-- 		lspconfig["jdtls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "java" },
+		-- 		})
+		-- 	end,
+		-- 	["buf_ls"] = function()
+		-- 		lspconfig["buf_ls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "proto" },
+		-- 		})
+		-- 	end,
+		-- 	["jsonls"] = function()
+		-- 		lspconfig["jsonls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "json" },
+		-- 		})
+		-- 	end,
+		-- 	["ts_ls"] = function()
+		-- 		lspconfig["ts_ls"].setup({
+		-- 			capabilities = capabilities,
+		-- 		})
+		-- 	end,
+		-- 	["tailwindcss"] = function()
+		-- 		lspconfig["tailwindcss"].setup({
+		-- 			capabilities = capabilities,
+		-- 			on_attach = function(client, bufnr)
+		-- 				-- turn off Tailwind’s hover altogether
+		-- 				-- client.server_capabilities.hoverProvider = false
+		-- 			end,
+		-- 		})
+		-- 	end,
+		-- 	["yamlls"] = function()
+		-- 		lspconfig["yamlls"].setup({
+		-- 			capabilities = capabilities,
+		-- 			filetypes = { "yaml" },
+		-- 		})
+		-- 	end,
+		-- })
 
 		-- Non-mason LSP configuraions
-		lspconfig.clangd.setup({
-			capabilities = capabilities,
-			-- init_options = {
-			-- 	compilationDatabasePath = "android/build/cmake",
-			-- },
-
-			filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "hpp" },
-			cmd = {
-				"clangd",
-				"--header-insertion=iwyu",
-				"--background-index",
-				"--completion-style=detailed",
-				"--cross-file-rename",
-				"--clang-tidy",
-			},
-		})
+		-- lspconfig.clangd.setup({
+		-- 	capabilities = capabilities,
+		-- 	-- init_options = {
+		-- 	-- 	compilationDatabasePath = "android/build/cmake",
+		-- 	-- },
+		--
+		-- 	filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "hpp" },
+		-- 	cmd = {
+		-- 		"clangd",
+		-- 		"--header-insertion=iwyu",
+		-- 		"--background-index",
+		-- 		"--completion-style=detailed",
+		-- 		"--cross-file-rename",
+		-- 		"--clang-tidy",
+		-- 	},
+		-- })
 
 		-- local sourceKitCapabilities = cmp_nvim_lsp.default_capabilities({
 		-- 	workspace = {
@@ -233,27 +246,27 @@ return {
 		-- 		},
 		-- 	},
 		-- })
-		local sourceKitCapabilities = capabilities
-		sourceKitCapabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
-		lspconfig.sourcekit.setup({
-			filetypes = { "swift" },
-			capabilities = sourceKitCapabilities,
-			cmd = { "sourcekit-lsp" },
-			-- root_dir = function(filename, _)
-			-- 	local util = require("lspconfig.util")
-			-- 	return util.root_pattern("*xcodeproj", ".xcworkspace")(filename)
-			-- 		or util.find_git_ancestor(filename)
-			-- 		or util.root_pattern("Package.swift")(filename)
-			-- end,
-			-- root_dir = "~/Develop/inda_audio/example/ios/",
-		})
+		-- local sourceKitCapabilities = capabilities
+		-- sourceKitCapabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+		-- lspconfig.sourcekit.setup({
+		-- 	filetypes = { "swift" },
+		-- 	capabilities = sourceKitCapabilities,
+		-- 	cmd = { "sourcekit-lsp" },
+		-- 	-- root_dir = function(filename, _)
+		-- 	-- 	local util = require("lspconfig.util")
+		-- 	-- 	return util.root_pattern("*xcodeproj", ".xcworkspace")(filename)
+		-- 	-- 		or util.find_git_ancestor(filename)
+		-- 	-- 		or util.root_pattern("Package.swift")(filename)
+		-- 	-- end,
+		-- 	-- root_dir = "~/Develop/inda_audio/example/ios/",
+		-- })
 
 		-- Set unrecognized filetypes here
-		vim.filetype.add({
-			extension = {
-				arb = "json",
-				["swift-format"] = "json",
-			},
-		})
+		-- vim.filetype.add({
+		-- 	extension = {
+		-- 		arb = "json",
+		-- 		["swift-format"] = "json",
+		-- 	},
+		-- })
 	end,
 }

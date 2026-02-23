@@ -52,7 +52,10 @@ return {
 				"terraform",
 				"swift",
 				"java",
-				-- "dart",
+				"typescript",
+				"tsx",
+				"javascript",
+				"prisma",
 			},
 			incremental_selection = {
 				enable = false,

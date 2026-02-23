@@ -34,6 +34,12 @@ return {
 				"terraformls",
 				"jdtls",
 				"buf_ls",
+				"ts_ls",
+				"jsonls",
+				"tailwindcss",
+				"yamlls",
+				"eslint",
+				"prismals",
 			},
 		})
 
@@ -48,6 +54,7 @@ return {
 				"swiftlint",
 				"golangci-lint",
 				"black",
+				"eslint_d",
 			},
 		})
 	end,

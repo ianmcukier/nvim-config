@@ -2,6 +2,7 @@ return {
 	{
 		"nvim-flutter/flutter-tools.nvim",
 		ft = { "dart" },
+		enabled = false,
 		lazy = false,
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {

@@ -20,6 +20,8 @@ return {
 					".symlinks",
 					"test_data",
 					"Pods",
+					"node_modules",
+					"dist",
 				},
 				sources = {
 					files = { hidden = true, ignored = true },
@@ -33,7 +35,7 @@ return {
 					projects = {
 						ignored = true,
 						hidden = true,
-						dev = { "~/Develop/projects/", "~/Develop/projects/rumi/", "~/.config/" },
+						dev = { "~/dev/rumi/", "~/.config/" },
 						patterns = {
 							".gitignore",
 						},

@@ -7,7 +7,7 @@ return {
 				require("fzf-lua").files({ cwd = opt.cwd })
 			end,
 			detection_methods = { "pattern" },
-			patterns = { ">projects", ">rumi", "=nvim" },
+			patterns = { ">rumi", "=nvim" },
 
 			-- exclude_dirs = { "~/.config/nvim" },
 		})
