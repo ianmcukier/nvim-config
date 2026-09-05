@@ -13,7 +13,6 @@ return {
 					"bazel-*",
 					".git",
 					".vscode",
-					"build",
 					".gradle",
 					".dart_tool",
 					".DS_Store",
@@ -21,7 +20,6 @@ return {
 					"test_data",
 					"Pods",
 					"node_modules",
-					"dist",
 				},
 				sources = {
 					files = { hidden = true, ignored = true },
@@ -32,26 +30,33 @@ return {
 						auto_close = true,
 						-- layout = { preset = "dropdown", layout = { position = "float" } },
 					},
-					projects = {
-						ignored = true,
-						hidden = true,
-						dev = { "~/dev/rumi/", "~/.config/" },
-						patterns = {
-							".gitignore",
+					gh_diff = {
+						auto_close = false,
+						layout = {
+							preset = "right",
+							hidden = { "preview" },
 						},
-						recent = false,
-						win = {
-							preview = { minimal = true },
-							input = {
-								keys = {
-									-- every action will always first change the cwd of the current tabpage to the project
-									["<CR>"] = { { "tcd", "picker_files" }, mode = { "n", "i" } },
-									["<c-e>"] = { { "tcd", "picker_explorer" }, mode = { "n", "i" } },
-									["<c-f>"] = { { "tcd", "picker_files" }, mode = { "n", "i" } },
-									["<c-g>"] = { { "tcd", "picker_grep" }, mode = { "n", "i" } },
-									["<c-r>"] = { { "tcd", "picker_recent" }, mode = { "n", "i" } },
-									["<c-w>"] = { { "tcd" }, mode = { "n", "i" } },
-								},
+					},
+				},
+				projects = {
+					ignored = true,
+					hidden = true,
+					dev = { "~/dev/rumi/", "~/.config/" },
+					patterns = {
+						".gitignore",
+					},
+					recent = false,
+					win = {
+						preview = { minimal = true },
+						input = {
+							keys = {
+								-- every action will always first change the cwd of the current tabpage to the project
+								["<CR>"] = { { "tcd", "picker_files" }, mode = { "n", "i" } },
+								["<c-e>"] = { { "tcd", "picker_explorer" }, mode = { "n", "i" } },
+								["<c-f>"] = { { "tcd", "picker_files" }, mode = { "n", "i" } },
+								["<c-g>"] = { { "tcd", "picker_grep" }, mode = { "n", "i" } },
+								["<c-r>"] = { { "tcd", "picker_recent" }, mode = { "n", "i" } },
+								["<c-w>"] = { { "tcd" }, mode = { "n", "i" } },
 							},
 						},
 					},
@@ -75,6 +80,13 @@ return {
 				-- your notifier configuration comes here
 				-- or leave it empty to use the default settings
 				-- refer to the configuration section below
+			},
+			gh = {
+				wo = {
+					foldenable = false,
+					foldmethod = "manual",
+					foldexpr = "0",
+				},
 			},
 		},
 		keys = {
@@ -261,6 +273,20 @@ return {
 				end,
 				desc = "Git Browse",
 				mode = { "n", "v" },
+			},
+			{
+				"<leader>hp",
+				function()
+					Snacks.picker.gh_pr()
+				end,
+				desc = "GitHub Pull Requests (open)",
+			},
+			{
+				"<leader>hP",
+				function()
+					Snacks.picker.gh_pr({ state = "all" })
+				end,
+				desc = "GitHub Pull Requests (all)",
 			},
 		},
 	},

@@ -3,18 +3,16 @@ return { -- You can easily change to a different colorscheme.
 	-- change the command in the config to whatever the name of that colorscheme is.
 	--
 	-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-	"rebelot/kanagawa.nvim",
-	-- name = "catppuccin",
+	-- "rebelot/kanagawa.nvim",
+	"catppuccin/nvim",
+	name = "catppuccin",
 	priority = 1000, -- Make sure to load this before all the other start plugins.
-	dependencies = {
-		"folke/lsp-colors.nvim",
-	},
 	init = function()
 		-- Load the colorscheme here.
 		-- Like many other themes, this one has different styles, and you could load
 		-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-		-- vim.cmd.colorscheme("catppuccin-mocha")
-		vim.cmd("colorscheme kanagawa-wave")
+		vim.cmd.colorscheme("catppuccin-mocha")
+		-- vim.cmd("colorscheme kanagawa-wave")
 		--
 		-- -- You can configure highlights by doing something like:
 		-- vim.cmd.hi("Comment gui=none")
@@ -25,6 +23,7 @@ return { -- You can easily change to a different colorscheme.
 			INFO = "󰠠",
 		}
 		vim.diagnostic.config({
+			virtual_text = true,
 			signs = {
 				text = {
 					[vim.diagnostic.severity.ERROR] = signs["ERROR"],
@@ -33,7 +32,6 @@ return { -- You can easily change to a different colorscheme.
 					[vim.diagnostic.severity.HINT] = signs["INFO"],
 				},
 			},
-			virtual_text = false,
 			underline = true,
 			float = {
 				source = "if_many",
@@ -60,7 +58,30 @@ return { -- You can easily change to a different colorscheme.
 	end,
 	config = function()
 		vim.api.nvim_create_autocmd("ColorScheme", {
-			command = [[highlight CursorLine guibg=#232a2e]],
+			callback = function()
+				-- Additions (green)
+				vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#163a24", fg = "NONE" })
+
+				-- Deletions (red)
+				vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#4a1f24", fg = "NONE" })
+
+				-- CHANGED lines → must NOT be green
+				vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2a2f3a", fg = "NONE" }) -- neutral
+
+				-- Highlight exact changed text
+				vim.api.nvim_set_hl(0, "DiffText", { bg = "#46506a", fg = "NONE", bold = true })
+
+				-- CursorLine (keep, but may interfere)
+				vim.api.nvim_set_hl(0, "CursorLine", { bg = "#232a2e" })
+			end,
+		})
+
+		vim.api.nvim_create_autocmd("BufWinEnter", {
+			callback = function()
+				if vim.wo.diff then
+					vim.wo.cursorline = false
+				end
+			end,
 		})
 		-- require("kanagawa").setup({
 		-- 	theme = "wave",

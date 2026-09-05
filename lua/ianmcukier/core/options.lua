@@ -56,3 +56,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
+
+-- Better diff behavior
+vim.opt.diffopt = {
+	"internal",
+	"filler",
+	"closeoff",
+	"context:3",
+	"algorithm:patience",
+	"indent-heuristic",
+	"linematch:60",
+}
