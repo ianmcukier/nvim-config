@@ -103,6 +103,42 @@ if vim.env.PROBE_SIGNS == "1" then
   if s[vim.diagnostic.severity.INFO] ~= "󰠠" then table.insert(out, "SIGN INFO wrong") end
   if s[vim.diagnostic.severity.HINT] ~= "" then table.insert(out, "SIGN HINT wrong") end
 end
+if vim.env.PROBE_BORDERS == "1" then
+  if vim.o.winborder ~= "rounded" then table.insert(out, "winborder=" .. tostring(vim.o.winborder)) end
+  if vim.o.pumborder ~= "rounded" then table.insert(out, "pumborder=" .. tostring(vim.o.pumborder)) end
+end
+if vim.env.PROBE_LUALS == "1" then
+  -- settings live in lsp/lua_ls.lua and are merged by Neovim; assert the merge, not the file
+  local globals = vim.tbl_get(vim.lsp.config["lua_ls"] or {}, "settings", "Lua", "diagnostics", "globals")
+  if type(globals) ~= "table" or not vim.tbl_contains(globals, "vim") then
+    table.insert(out, "lua_ls globals not merged: " .. vim.inspect(globals))
+  end
+end
+if vim.env.PROBE_BUFMAPS == "1" then
+  -- nvim_get_keymap returns ONLY global maps, so the dedup above is blind to a plugin
+  -- shadowing a global lhs in one buffer -- exactly how <leader>hp was double-bound
+  -- (gitsigns preview-hunk buffer-local vs the global PR picker) before this cleanup.
+  local function bufmaps(buf, mode)
+    local t = {}
+    for _, m in ipairs(vim.api.nvim_buf_get_keymap(buf, mode)) do t[m.lhs] = true end
+    return t
+  end
+  vim.cmd.edit("lua/ianmcukier/core/options.lua")
+  local buf = vim.api.nvim_get_current_buf()
+  if not vim.wait(15000, function() return bufmaps(buf, "n")["]h"] ~= nil end, 100) then
+    table.insert(out, "BUFMAPS gitsigns never attached in a tracked buffer")
+  else
+    -- lua_ls is a mason binary and may be missing on a fresh machine: best effort, never fatal
+    vim.wait(10000, function() return bufmaps(buf, "n")[vim.g.mapleader .. "d"] ~= nil end, 100)
+    for _, mode in ipairs({ "n", "v", "x", "o" }) do
+      local g = {}
+      for _, m in ipairs(vim.api.nvim_get_keymap(mode)) do g[m.lhs] = true end
+      for _, m in ipairs(vim.api.nvim_buf_get_keymap(buf, mode)) do
+        if g[m.lhs] then table.insert(out, "SHADOW " .. mode .. " " .. m.lhs) end
+      end
+    end
+  end
+end
 vim.cmd("normal! yy")
 -- The filetypes this config expects treesitter highlighting and indentation in. Listed here rather
 -- than derived from the plugin spec: an acceptance check that reads its expectation out of the code
@@ -143,10 +179,14 @@ EOF
 signs=0; after B && signs=1              # sign swap and vim.highlight are fixed in B
 deprecated=0; after D && deprecated=1    # nvim-treesitter master calls the deprecated vim.validate until D
 parsers=0; after D && parsers=1          # parsers are installed by the treesitter main migration in D
-PROBE_SIGNS="$signs" PROBE_DEPRECATED="$deprecated" PROBE_PARSERS="$parsers" PROBE_OUT="$TMP/probe.out" \
+bufmaps=0; after B && bufmaps=1          # the buffer-local vs global keymap conflicts are resolved in B
+borders=0; after D && borders=1          # winborder/pumborder are set in D
+luals=0; after F && luals=1              # lsp/lua_ls.lua lands in F
+PROBE_SIGNS="$signs" PROBE_DEPRECATED="$deprecated" PROBE_PARSERS="$parsers" \
+  PROBE_BUFMAPS="$bufmaps" PROBE_BORDERS="$borders" PROBE_LUALS="$luals" PROBE_OUT="$TMP/probe.out" \
   nvim --headless -c "lua vim.schedule(function() dofile('$TMP/probe.lua') end)" >/dev/null 2>&1 || true
 [ -f "$TMP/probe.out" ] || fail "probe did not run"
 [ ! -s "$TMP/probe.out" ] || fail "probe: $(cat "$TMP/probe.out")"
-pass "keymaps unique, signs correct, parsers active, no deprecations"
+pass "keymaps unique (global + buffer-local), signs correct, parsers active, borders set, no deprecations"
 
 echo "ALL CHECKS PASSED (PHASE=$PHASE)"
