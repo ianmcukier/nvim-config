@@ -16,4 +16,7 @@ Started from [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and Jo
     scripts/check.sh
 
 Runs the acceptance checks (plugin tree, lock file, stylua, headless startup, keymap uniqueness,
-deprecation health). Run before committing and after every Neovim upgrade.
+treesitter parsers, deprecation health). Run before committing and after every Neovim upgrade.
+
+On a fresh clone, let Mason finish installing its tools first (`:MasonToolsInstall`) — the stylua
+gate needs that binary.
