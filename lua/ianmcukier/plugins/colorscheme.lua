@@ -36,7 +36,6 @@ return { -- You can easily change to a different colorscheme.
 			float = {
 				source = "if_many",
 				header = "",
-				border = "rounded",
 				focusable = false,
 			},
 			-- float = {

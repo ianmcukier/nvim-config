@@ -117,7 +117,6 @@ return {
 					min_width = 40,
 					max_width = 50,
 					max_height = 40,
-					border = "double",
 					scrollbar = true,
 					winblend = 0,
 				},
@@ -126,7 +125,6 @@ return {
 				-- enabled = true,
 				min_width = 10,
 				max_height = 15,
-				border = "double",
 				winblend = 0,
 				winhighlight = "Pmenu:BlinkCmpMenu,FloatBorder:FloatBorder",
 				--

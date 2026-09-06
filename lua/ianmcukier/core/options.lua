@@ -25,6 +25,9 @@ opt.incsearch = true
 opt.hlsearch = true
 opt.undofile = true
 
+opt.winborder = "rounded"
+opt.pumborder = "rounded"
+
 opt.diffopt = {
 	"internal",
 	"filler",
