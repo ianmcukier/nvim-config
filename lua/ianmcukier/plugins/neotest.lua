@@ -25,14 +25,28 @@ return {
 				require("neotest-python"),
 			},
 		})
-
-		require("which-key").add({
-			{ "<leader>t", group = "Tests" },
-		})
 	end,
 	keys = {
-		{ "<leader>tr", function() require("neotest").run.run() end, desc = "Run nearest test" },
-		{ "<leader>tR", function() require("neotest").run.run(vim.fn.expand("%")) end, desc = "Run all tests in file" },
-		{ "<leader>to", function() require("neotest").output_panel.toggle() end, desc = "Toggle output panel" },
+		{
+			"<leader>tr",
+			function()
+				require("neotest").run.run()
+			end,
+			desc = "Run nearest test",
+		},
+		{
+			"<leader>tR",
+			function()
+				require("neotest").run.run(vim.fn.expand("%"))
+			end,
+			desc = "Run all tests in file",
+		},
+		{
+			"<leader>to",
+			function()
+				require("neotest").output_panel.toggle()
+			end,
+			desc = "Toggle output panel",
+		},
 	},
 }

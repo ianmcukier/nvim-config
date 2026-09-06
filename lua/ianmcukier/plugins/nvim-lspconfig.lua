@@ -18,16 +18,6 @@ return {
 			capabilities = require("blink.cmp").get_lsp_capabilities(),
 		})
 
-		vim.lsp.config("lua_ls", {
-			settings = {
-				Lua = {
-					diagnostics = {
-						globals = { "vim" },
-					},
-				},
-			},
-		})
-
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("ianmcukier-lsp-attach", { clear = true }),
 			callback = function(ev)

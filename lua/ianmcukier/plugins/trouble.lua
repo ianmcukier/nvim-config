@@ -43,10 +43,4 @@ return {
 			desc = "Fzf",
 		},
 	},
-	init = function()
-		require("which-key").add({
-			{ "<leader>x", group = "Trouble" },
-		})
-	end,
 }
--- filter.severity={vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR}
