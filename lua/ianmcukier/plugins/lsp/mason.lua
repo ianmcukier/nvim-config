@@ -31,7 +31,6 @@ return {
 				"sqlls",
 				"pyright",
 				"terraformls",
-				"jdtls",
 				"buf_ls",
 				"ts_ls",
 				"jsonls",
@@ -45,15 +44,11 @@ return {
 		mason_tool_installer.setup({
 			ensure_installed = {
 				"gofumpt",
-				"sql-formatter",
 				"goimports",
+				"sql-formatter",
 				"prettier",
 				"stylua",
-				"dart-debug-adapter",
-				"swiftlint",
-				"golangci-lint",
 				"black",
-				"eslint_d",
 			},
 		})
 	end,

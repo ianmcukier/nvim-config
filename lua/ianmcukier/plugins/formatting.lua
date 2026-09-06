@@ -8,7 +8,7 @@ return {
 		conform.setup({
 			formatters = {
 				sql_formatter = {
-					prepend_args = { "-c", vim.fn.expand("~/.config/nvim/sql_formatter.json") },
+					prepend_args = { "-c", vim.fn.stdpath("config") .. "/sql_formatter.json" },
 				},
 				black = {
 					prepend_args = { "--fast" },

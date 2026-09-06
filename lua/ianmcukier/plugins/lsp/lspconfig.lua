@@ -3,8 +3,6 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
 		"saghen/blink.cmp",
-		"rcarriga/nvim-notify",
-		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{
 			"folke/lazydev.nvim",
 			ft = "lua",
@@ -16,12 +14,10 @@ return {
 		},
 	},
 	config = function()
-		-- Set global capabilities for all LSP servers (blink.cmp completion)
 		vim.lsp.config("*", {
 			capabilities = require("blink.cmp").get_lsp_capabilities(),
 		})
 
-		-- Configure lua_ls to recognize the `vim` global
 		vim.lsp.config("lua_ls", {
 			settings = {
 				Lua = {
@@ -33,35 +29,24 @@ return {
 		})
 
 		vim.api.nvim_create_autocmd("LspAttach", {
-			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+			group = vim.api.nvim_create_augroup("ianmcukier-lsp-attach", { clear = true }),
 			callback = function(ev)
 				local client = vim.lsp.get_client_by_id(ev.data.client_id)
 				if not client then
 					return
 				end
 
-				require("notify")("Attached " .. client.name .. "!", "msg", { title = "LSPConfig" })
+				vim.notify("Attached " .. client.name, vim.log.levels.INFO, { title = "LSP" })
 
-				local opts = { buffer = ev.buf, silent = true }
+				local function map(lhs, rhs, desc)
+					vim.keymap.set("n", lhs, rhs, { buffer = ev.buf, silent = true, desc = desc })
+				end
 
-				opts.desc = "Show line diagnostics"
-				vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-
-				opts.desc = "Code actions"
-				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-
-				opts.desc = "Show buffer diagnostics"
-				vim.keymap.set("n", "<leader>D", function()
+				map("<leader>d", vim.diagnostic.open_float, "Line diagnostics")
+				map("<leader>D", function()
 					Snacks.picker.diagnostics_buffer()
-				end, opts)
-
-				opts.desc = "Search workspace symbols"
-				vim.keymap.set("n", "<leader>sy", function()
-					Snacks.picker.lsp_workspace_symbols()
-				end, opts)
-
-				opts.desc = "Restart LSP"
-				vim.keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
+				end, "Buffer diagnostics")
+				map("<leader>rs", "<cmd>LspRestart<cr>", "Restart LSP")
 			end,
 		})
 	end,

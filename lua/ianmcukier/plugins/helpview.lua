@@ -1,7 +1,5 @@
 return {
 	"OXY2DEV/helpview.nvim",
-	lazy = false, -- Recommended
-	dependencies = {
-		"nvim-treesitter/nvim-treesitter",
-	},
+	ft = "help",
+	dependencies = { "nvim-treesitter/nvim-treesitter" },
 }

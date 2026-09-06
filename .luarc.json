@@ -1,7 +1,3 @@
 {
-    "diagnostics.globals": [
-        "vim",
-        "LazyVim",
-        "autocmd"
-    ]
+    "diagnostics.globals": ["vim"]
 }

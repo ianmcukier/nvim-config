@@ -28,8 +28,8 @@ return { -- You can easily change to a different colorscheme.
 				text = {
 					[vim.diagnostic.severity.ERROR] = signs["ERROR"],
 					[vim.diagnostic.severity.WARN] = signs["WARN"],
-					[vim.diagnostic.severity.INFO] = signs["HINT"],
-					[vim.diagnostic.severity.HINT] = signs["INFO"],
+					[vim.diagnostic.severity.INFO] = signs["INFO"],
+					[vim.diagnostic.severity.HINT] = signs["HINT"],
 				},
 			},
 			underline = true,
