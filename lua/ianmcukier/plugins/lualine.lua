@@ -1,30 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = {
-		"nvim-tree/nvim-web-devicons",
-		{
-			"linrongbin16/lsp-progress.nvim",
-			opts = {
-				spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
-				client_format = function(client_name, spinner, series_messages)
-					if #series_messages > 0 then
-						return spinner .. " " .. client_name
-					end
-					return nil
-				end,
-				format = function(messages)
-					local clients = vim.lsp.get_clients({ bufnr = vim.fn.bufnr() })
-					if #clients <= 0 then
-						return "󰜺 LSP"
-					end
-					if #messages > 0 then
-						return table.concat(messages, " ")
-					end
-					return " "
-				end,
-			},
-		},
-	},
+	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		local lualine = require("lualine")
 		local lazy_status = require("lazy.status")
@@ -95,14 +71,13 @@ return {
 				lualine_c = {},
 				lualine_x = {
 					{
-						function()
-							local msg = require("lsp-progress").progress()
-							if msg == "" then
-								return "󰜺 LSP"
-							else
-								return msg
-							end
-						end,
+						"lsp_status",
+						icon = "",
+						symbols = {
+							spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
+							done = "",
+							separator = " ",
+						},
 						color = { fg = colors.iris },
 					},
 					{
@@ -145,12 +120,6 @@ return {
 				},
 			},
 			tabline = {},
-		})
-		vim.api.nvim_create_augroup("lualine_augroup", { clear = true })
-		vim.api.nvim_create_autocmd("User", {
-			group = "lualine_augroup",
-			pattern = "LspProgressStatusUpdated",
-			callback = require("lualine").refresh,
 		})
 	end,
 }

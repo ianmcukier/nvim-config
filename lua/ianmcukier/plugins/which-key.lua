@@ -12,8 +12,6 @@ return {
 			{ "<leader>x", group = "Trouble" },
 			{ "<leader>b", group = "DB" },
 			{ "<leader>t", group = "Tests" },
-			{ "<leader>l", group = "Location List" },
-			{ "<leader>q", group = "QuickFix List" },
 			{ "<leader>.", group = "AI" },
 			{ "<leader>m", group = "Format" },
 		},

@@ -24,17 +24,17 @@ pass "no disabled specs"
 [ ! -d lua/ianmcukier/plugins/lsp ] || fail "plugins/lsp still exists"
 # Identity, not just cardinality: a botched rename that drops one file and adds another
 # keeps the count at 27 and would otherwise pass. One name per plugin family.
-expected_plugins="blink-cmp catppuccin claudecode conform diffview gitsigns helpview
-log-highlight lualine markdown-preview mason neotest nvim-bqf nvim-lspconfig nvim-surround
-nvim-treesitter render-markdown sidekick snacks todo-comments trouble vim-dadbod-ui
-vim-projectionist vim-tmux-navigator vim-togglelist vim-wordmotion which-key"
+expected_plugins="blink-cmp catppuccin claudecode conform diffview-plus gitsigns grug-far helpview
+log-highlight lualine mason neotest nvim-lspconfig nvim-surround nvim-treesitter
+nvim-treesitter-textobjects quicker render-markdown sidekick snacks todo-comments trouble
+vim-dadbod-ui vim-projectionist vim-tmux-navigator vim-wordmotion which-key"
 diff <(printf '%s\n' $expected_plugins | sort) \
      <(basename -s .lua -a lua/ianmcukier/plugins/*.lua | sort) \
   || fail "plugin set differs from expected ('<' missing, '>' unexpected)"
 pass "27 plugin files, names match"
 
 # --- forbidden strings -------------------------------------------------------
-pat='require\("notify"\)|telescope|noice|alpha-nvim|require\("alpha"|avante|mcphub|vim\.highlight|~/\.config/nvim'
+pat='require\("notify"\)|telescope|noice|alpha-nvim|require\("alpha"|avante|mcphub|lsp-progress|markdown-preview|nvim-bqf|togglelist|sindrets/diffview|vim\.highlight|~/\.config/nvim'
 grep -rnE "$pat" lua/ && fail "reference to a removed plugin or deprecated API"
 pass "no references to removed plugins"
 
@@ -46,7 +46,8 @@ pass "no convention violations"
 # --- lock -------------------------------------------------------------------
 for k in telescope.nvim telescope-fzf-native.nvim telescope-ui-select.nvim telescope-luasnip.nvim \
            telescope-simulators.nvim noice.nvim nui.nvim nvim-notify dressing.nvim alpha-nvim mcphub.nvim \
-         blink-cmp-avante mini.nvim neotest-dart fzf project.nvim nvim-lsp-file-operations; do
+         blink-cmp-avante mini.nvim neotest-dart fzf project.nvim nvim-lsp-file-operations \
+         nvim-bqf vim-qfedit vim-togglelist markdown-preview.nvim lsp-progress.nvim diffview.nvim; do
   jq -e --arg k "$k" 'has($k)' lazy-lock.json >/dev/null && fail "lazy-lock.json still has $k"
 done
 pass "lock has no removed plugins"
@@ -96,6 +97,7 @@ if s[vim.diagnostic.severity.INFO] ~= "󰠠" then table.insert(out, "SIGN INFO w
 if s[vim.diagnostic.severity.HINT] ~= "" then table.insert(out, "SIGN HINT wrong") end
 if vim.o.winborder ~= "rounded" then table.insert(out, "winborder=" .. tostring(vim.o.winborder)) end
 if vim.o.pumborder ~= "rounded" then table.insert(out, "pumborder=" .. tostring(vim.o.pumborder)) end
+if not tostring(vim.o.statuscolumn):find("snacks", 1, true) then table.insert(out, "statuscolumn is not snacks: " .. tostring(vim.o.statuscolumn)) end
 -- settings live in lsp/lua_ls.lua and are merged by Neovim; assert the merge, not the file
 local globals = vim.tbl_get(vim.lsp.config["lua_ls"] or {}, "settings", "Lua", "diagnostics", "globals")
 if type(globals) ~= "table" or not vim.tbl_contains(globals, "vim") then

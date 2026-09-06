@@ -1,3 +1,0 @@
-return {
-	"milkypostman/vim-togglelist",
-}
