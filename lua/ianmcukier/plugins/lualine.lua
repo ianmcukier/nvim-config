@@ -2,37 +2,32 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
-		"linrongbin16/lsp-progress.nvim",
+		{
+			"linrongbin16/lsp-progress.nvim",
+			opts = {
+				spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
+				client_format = function(client_name, spinner, series_messages)
+					if #series_messages > 0 then
+						return spinner .. " " .. client_name
+					end
+					return nil
+				end,
+				format = function(messages)
+					local clients = vim.lsp.get_clients({ bufnr = vim.fn.bufnr() })
+					if #clients <= 0 then
+						return "󰜺 LSP"
+					end
+					if #messages > 0 then
+						return table.concat(messages, " ")
+					end
+					return " "
+				end,
+			},
+		},
 	},
 	config = function()
-		require("lsp-progress").setup({
-			spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
-			client_format = function(client_name, spinner, series_messages)
-				if #series_messages > 0 then
-					return spinner .. " " .. client_name
-				else
-					return nil
-				end
-			end,
-			format = function(messages)
-				local clients = vim.lsp.get_clients({
-					bufnr = vim.fn.bufnr(),
-				})
-
-				if #clients <= 0 then
-					return "󰜺 LSP"
-				end
-
-				if #messages > 0 then
-					return table.concat(messages, " ")
-				end
-
-				return " "
-			end,
-		})
-
 		local lualine = require("lualine")
-		local lazy_status = require("lazy.status") -- to configure lazy pending updates count
+		local lazy_status = require("lazy.status")
 		vim.opt.showmode = false
     -- stylua: ignore
     local colors = {
@@ -71,30 +66,15 @@ return {
 			end
 		end
 
-		-- configure lualine with modified theme
 		lualine.setup({
 			options = {
 				theme = bubbles_theme,
 				component_separators = "",
 				section_separators = { left = "" },
 				always_divide_middle = false,
-				ignore_focus = {
-					"dapui_watches",
-					"dapui_breakpoints",
-					"dapui_scopes",
-					"dapui_console",
-					"dapui_stacks",
-					"dap-repl",
-				},
 				disabled_filetypes = {
-					statusline = {
-						-- "alpha",
-						"NvimTree",
-					},
-					winbar = {
-						"NvimTree",
-						-- "alpha",
-					},
+					statusline = {},
+					winbar = {},
 				},
 			},
 			sections = {
@@ -166,7 +146,6 @@ return {
 			},
 			tabline = {},
 		})
-		-- listen lsp-progress event and refresh lualine
 		vim.api.nvim_create_augroup("lualine_augroup", { clear = true })
 		vim.api.nvim_create_autocmd("User", {
 			group = "lualine_augroup",
