@@ -104,9 +104,33 @@ if vim.env.PROBE_SIGNS == "1" then
   if s[vim.diagnostic.severity.HINT] ~= "" then table.insert(out, "SIGN HINT wrong") end
 end
 vim.cmd("normal! yy")
-for _, ft in ipairs({ "go", "lua", "typescript", "sql", "markdown", "help" }) do
+-- The filetypes this config expects treesitter highlighting and indentation in. Listed here rather
+-- than derived from the plugin spec: an acceptance check that reads its expectation out of the code
+-- under test asserts nothing. Between them these cover 24 of the 27 parsers.
+for _, ft in ipairs({
+  "go", "gomod", "gosum", "gowork", "lua", "typescript", "typescriptreact", "javascript",
+  "sql", "markdown", "help", "json", "yaml", "html", "css", "sh", "vim", "query",
+  "dockerfile", "gitignore", "c", "python", "terraform", "prisma",
+}) do
   vim.cmd("enew")
   vim.bo.filetype = ft
+  if vim.env.PROBE_PARSERS == "1" then
+    local buf = vim.api.nvim_get_current_buf()
+    if not vim.treesitter.highlighter.active[buf] then
+      table.insert(out, "NOHIGHLIGHT " .. ft)
+    elseif vim.bo[buf].indentexpr == "" then
+      table.insert(out, "NOINDENTEXPR " .. ft)
+    end
+  end
+end
+if vim.env.PROBE_PARSERS == "1" then
+  -- the remaining 3 parsers are injected into other languages and have no filetype of their own.
+  -- "parsers" is required: a bare get_installed() unions in the queries dir, which outlives the .so
+  local installed = {}
+  for _, lang in ipairs(require("nvim-treesitter").get_installed("parsers")) do installed[lang] = true end
+  for _, lang in ipairs({ "markdown_inline", "luadoc", "regex" }) do
+    if not installed[lang] then table.insert(out, "NOPARSER " .. lang) end
+  end
 end
 if vim.env.PROBE_DEPRECATED == "1" then
   vim.cmd("checkhealth vim.deprecated")
@@ -118,10 +142,11 @@ vim.cmd("qa!")
 EOF
 signs=0; after B && signs=1              # sign swap and vim.highlight are fixed in B
 deprecated=0; after D && deprecated=1    # nvim-treesitter master calls the deprecated vim.validate until D
-PROBE_SIGNS="$signs" PROBE_DEPRECATED="$deprecated" PROBE_OUT="$TMP/probe.out" \
+parsers=0; after D && parsers=1          # parsers are installed by the treesitter main migration in D
+PROBE_SIGNS="$signs" PROBE_DEPRECATED="$deprecated" PROBE_PARSERS="$parsers" PROBE_OUT="$TMP/probe.out" \
   nvim --headless -c "lua vim.schedule(function() dofile('$TMP/probe.lua') end)" >/dev/null 2>&1 || true
 [ -f "$TMP/probe.out" ] || fail "probe did not run"
 [ ! -s "$TMP/probe.out" ] || fail "probe: $(cat "$TMP/probe.out")"
-pass "keymaps unique, signs correct, no deprecations"
+pass "keymaps unique, signs correct, parsers active, no deprecations"
 
 echo "ALL CHECKS PASSED (PHASE=$PHASE)"
