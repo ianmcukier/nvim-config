@@ -8,8 +8,9 @@ PHASE="${PHASE:-F}"
 STARTUP_BUDGET_MS="${STARTUP_BUDGET_MS:-150}"   # warm baseline on 2026-09-05: 85-90 ms; cold: 148 ms
 STYLUA="${STYLUA:-$HOME/.local/share/nvim/mason/bin/stylua}"
 
-phase_idx() { case "$1" in A) echo 0;; B) echo 1;; C) echo 2;; D) echo 3;; F) echo 4;; *) echo "bad PHASE $1" >&2; exit 2;; esac; }
-after() { [ "$(phase_idx "$PHASE")" -ge "$(phase_idx "$1")" ]; }
+phase_idx() { case "$1" in A) echo 0;; B) echo 1;; C) echo 2;; D) echo 3;; F|E) echo 4;; *) return 1;; esac; }
+PHASE_IDX="$(phase_idx "$PHASE")" || { echo "FAIL: bad PHASE '$PHASE' (want A, B, C, D, F or E)" >&2; exit 2; }
+after() { [ "$PHASE_IDX" -ge "$(phase_idx "$1")" ]; }
 fail() { echo "FAIL: $*" >&2; exit 1; }
 pass() { echo "ok: $*"; }
 
@@ -84,7 +85,8 @@ pass "headless startup silent"
 
 # --- startup time ----------------------------------------------------------------
 nvim --headless --startuptime "$TMP/st.log" +qa >/dev/null 2>&1
-ms="$(grep 'NVIM STARTED' "$TMP/st.log" | awk '{print int($1)}')"
+ms="$(awk '/NVIM STARTED/ { print int($1) }' "$TMP/st.log" | tail -1)"
+[ -n "$ms" ] || fail "no 'NVIM STARTED' line in $TMP/st.log -- could not measure startup"
 [ "$ms" -le "$STARTUP_BUDGET_MS" ] || fail "startup ${ms}ms > ${STARTUP_BUDGET_MS}ms"
 pass "startup ${ms}ms"
 
@@ -128,9 +130,12 @@ if vim.env.PROBE_BUFMAPS == "1" then
   if not vim.wait(15000, function() return bufmaps(buf, "n")["]h"] ~= nil end, 100) then
     table.insert(out, "BUFMAPS gitsigns never attached in a tracked buffer")
   else
-    -- lua_ls is a mason binary and may be missing on a fresh machine: best effort, never fatal
-    vim.wait(10000, function() return bufmaps(buf, "n")[vim.g.mapleader .. "d"] ~= nil end, 100)
-    for _, mode in ipairs({ "n", "v", "x", "o" }) do
+    -- lua_ls is a mason binary and may be missing on a fresh machine: non-fatal, but a
+    -- silent skip would mean the LSP half of the keymap surface went unchecked unannounced
+    if not vim.wait(10000, function() return bufmaps(buf, "n")[vim.g.mapleader .. "d"] ~= nil end, 100) then
+      vim.fn.writefile({ "lua_ls did not attach: LSP buffer-local maps were NOT shadow-checked" }, vim.env.PROBE_NOTES)
+    end
+    for _, mode in ipairs({ "n", "v", "x", "i", "o" }) do
       local g = {}
       for _, m in ipairs(vim.api.nvim_get_keymap(mode)) do g[m.lhs] = true end
       for _, m in ipairs(vim.api.nvim_buf_get_keymap(buf, mode)) do
@@ -184,9 +189,11 @@ borders=0; after D && borders=1          # winborder/pumborder are set in D
 luals=0; after F && luals=1              # lsp/lua_ls.lua lands in F
 PROBE_SIGNS="$signs" PROBE_DEPRECATED="$deprecated" PROBE_PARSERS="$parsers" \
   PROBE_BUFMAPS="$bufmaps" PROBE_BORDERS="$borders" PROBE_LUALS="$luals" PROBE_OUT="$TMP/probe.out" \
-  nvim --headless -c "lua vim.schedule(function() dofile('$TMP/probe.lua') end)" >/dev/null 2>&1 || true
+  PROBE_FILE="$TMP/probe.lua" PROBE_NOTES="$TMP/probe.notes" \
+  nvim --headless -c "lua vim.schedule(function() dofile(vim.env.PROBE_FILE) end)" >/dev/null 2>&1 || true
 [ -f "$TMP/probe.out" ] || fail "probe did not run"
 [ ! -s "$TMP/probe.out" ] || fail "probe: $(cat "$TMP/probe.out")"
+[ ! -s "$TMP/probe.notes" ] || while IFS= read -r n; do echo "note: $n"; done < "$TMP/probe.notes"
 pass "keymaps unique (global + buffer-local), signs correct, parsers active, borders set, no deprecations"
 
 echo "ALL CHECKS PASSED (PHASE=$PHASE)"
